@@ -13,6 +13,9 @@
 	],
 	"scripts": {
 		"start:api": "yarn workspace api start",
+		"start:vtt": "yarn workspace vtt start",
+		"start:vtt:build": "yarn workspace vtt build",
+		"start:vtt:storybook": "yarn workspace vtt storybook",
 		"start:web": "yarn workspace web start",
 		"vercel:login": "yarn workspace web vercel login",
 		"vercel:link": "yarn workspace web vercel link",
