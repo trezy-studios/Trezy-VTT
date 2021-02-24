@@ -17,7 +17,7 @@ If you are working on the website you should already be a member of the Vercel t
 
 ```bash
 yarn vercel:login
-yarn vercel:link # twitch-channel-points-hackathon
+yarn vercel:link # trezy-vtt
 yarn vercel:env:pull
 ```
 

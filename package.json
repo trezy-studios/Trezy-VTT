@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "1.0.0",
 	"main": "index.js",
-	"repository": "git@github.com:trezy-studios/twitch-channel-points-hackathon.git",
+	"repository": "git@github.com:trezy-studios/Trezy-VTT.git",
 	"author": "Trezy <tre@trezy.com>",
 	"license": "BSD-3-Clause",
 	"workspaces": [
