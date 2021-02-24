@@ -18,7 +18,10 @@ const path = require('path')
 module.exports = {
 	devtool: 'source-map',
 
-	externals: [nodeExternals()],
+	externals: [
+		nodeExternals(),
+		'react',
+	],
 
 	mode: 'development',
 
