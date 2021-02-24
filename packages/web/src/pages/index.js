@@ -6,6 +6,7 @@ export default function HomePage() {
 	const {
 		isLoggedIn,
 		isLoggingIn,
+		isLoggingOut,
 		login,
 		logout,
 	} = useAuth()
