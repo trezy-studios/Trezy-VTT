@@ -13,6 +13,9 @@
 	],
 	"scripts": {
 		"start:api": "yarn workspace api start",
-		"start:web": "yarn workspace web start"
+		"start:web": "yarn workspace web start",
+		"vercel:login": "yarn workspace web vercel login",
+		"vercel:link": "yarn workspace web vercel link",
+		"vercel:env:pull": "yarn workspace web vercel env pull"
 	}
 }
