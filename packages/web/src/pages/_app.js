@@ -7,6 +7,7 @@ import 'scss/app.scss'
 
 
 // Local imports
+import { AuthContextProvider } from 'contexts/AuthContext'
 import { reportWebVitals } from 'helpers/reportWebVitals'
 
 
@@ -22,9 +23,11 @@ export default function App(props) {
 	} = props
 
 	return (
-		<div id="application-wrapper">
-			<Component {...pageProps} />
-		</div>
+		<AuthContextProvider>
+			<div id="application-wrapper">
+				<Component {...pageProps} />
+			</div>
+		</AuthContextProvider>
 	)
 }
 
