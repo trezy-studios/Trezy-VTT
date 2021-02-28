@@ -24,7 +24,7 @@ let first = true;
 		}
 	});
 
-	//const testingCode = "REDACTED";
+	const testingCode = "REDACTED";
 	const testingUserID = "REDACTED";
 	try {
 		/*await createOrUpdateUserFromAuthCode(null,
@@ -35,6 +35,7 @@ let first = true;
 				expires_in: 13178
 			});*/
 		await createOrUpdateUserFromOAuthToken("REDACTED");
+		//await createOrUpdateUserFromAuthCode(testingCode)
 	} catch (e) {
 		if (e instanceof UnauthorizedError) {
 			console.error("Was unauthorized...");
@@ -117,7 +118,7 @@ async function createOrUpdateUserFromTokenDetailed(access_token, expires_in, sco
 	userInfo.created_at = firebase.firestore.Timestamp.fromMillis(Date.parse(userInfo.created_at));
 	userInfo.expires_at = firebase.firestore.Timestamp.fromMillis(Date.now() + (expires_in * 1000));
 	console.log({userInfo});
-	await firestore.collection("users").doc(userInfo.id).set(userInfo);
+	await firestore.collection("users").doc(userInfo.id).set(userInfo, {merge: true});
 }
 
 async function createOrUpdateUserFromAuthCode(code, overrideObj = null) { // override is used for testing. Expect it to not exist in prod.
