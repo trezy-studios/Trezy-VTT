@@ -15,6 +15,7 @@ import PropTypes from 'prop-types'
 const INITIAL_STATE = {
 	isLoggedIn: false,
 	isLoggingIn: false,
+	isLoggingOut: false,
 }
 
 

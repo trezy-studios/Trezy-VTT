@@ -27,12 +27,22 @@ If you need the ENV variables for the API, just poke Trezy.
 
 ## Running the packages
 
+To run the API:
+```bash
+yarn start:api
+```
+
 To run the Next.js site:
 ```bash
 yarn start:web
 ```
 
-To run the API:
+To run the Storybook for the VTT:
 ```bash
-yarn start:api
+yarn start:vtt:storybook
+```
+
+To build the VTT when changes occur:
+```bash
+yarn start:vtt
 ```
