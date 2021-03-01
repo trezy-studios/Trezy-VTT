@@ -1,0 +1,17 @@
+{
+	"presets": [
+		"@babel/preset-react",
+		["@babel/preset-env", {
+			"targets": {
+				"chrome": "87"
+			}
+		}]
+	],
+	"plugins": [
+		["module-resolver", {
+			"root": ["./src"]
+		}],
+		"@babel/plugin-proposal-class-properties",
+		"@babel/plugin-proposal-optional-chaining"
+	]
+}

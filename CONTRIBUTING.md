@@ -21,18 +21,30 @@ yarn vercel:link # trezy-vtt
 yarn vercel:env:pull
 ```
 
+You'll also need to set your dev ENV variable so that Firebase will isolate your changes. To do this, just set `NEXT_PUBLIC_CURRENT_DEV=your name` in your `.env` file.
+
 ### API ENV Variables
 
 If you need the ENV variables for the API, just poke Trezy.
 
 ## Running the packages
 
+To run the API:
+```bash
+yarn start:api
+```
+
 To run the Next.js site:
 ```bash
 yarn start:web
 ```
 
-To run the API:
+To run the Storybook for the VTT:
 ```bash
-yarn start:api
+yarn start:vtt:storybook
+```
+
+To build the VTT when changes occur:
+```bash
+yarn start:vtt
 ```
