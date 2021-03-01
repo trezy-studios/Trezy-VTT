@@ -7,22 +7,58 @@ import * as twitch from 'helpers/twitch'
 import {UnauthorizedError} from 'helpers/twitch';
 
 let first = true;
+let listeningCampaigns = {};
 
 // Wrap it all in an `async` IIFE so we can simulate top-level `await`.
 (async () => {
 	// Create a collection reference
 	const campaignsCollection = firestore.collection('campaigns');
 	campaignsCollection.onSnapshot((snapshot) => {
-		if (first) {
+		/*if (first) {
 			console.log("First snapshot, assuming initial state...");
 			first = false;
 			return;
-		}
+		}*/
 		const changes = snapshot.docChanges();
 		for (const change of changes) {
-			console.log(change.doc.data());
+			switch (change.type) {
+				case "added":
+				case "modified":
+				{
+					let data = change.doc.data();
+					console.log(change.type + ": " + JSON.stringify(data));
+					if (data.isActive) {
+						if (!(change.doc.id in listeningCampaigns)) {
+							listeningCampaigns[change.doc.id] = change.doc.ref.collection("rewards").onSnapshot((snapshot) => {
+								console.log("An active campaign's rewards collection has been changed!");
+								//console.log(JSON.stringify(snapshot.docChanges()));
+							});
+							console.log("Added listener for " + change.doc.id)
+						}
+					} else {
+						if (change.doc.id in listeningCampaigns) {
+							listeningCampaigns[change.doc.id]();
+							delete listeningCampaigns[change.doc.id];
+							console.log("made inactive/removed: " + change.doc.id);
+						}
+					}
+					break;
+				}
+				case "removed":
+				{
+					if (change.doc.id in listeningCampaigns) {
+						listeningCampaigns[change.doc.id]();
+						delete listeningCampaigns[change.doc.id];
+					}
+					console.log("removed: " + change.doc.id);
+					break;
+				}
+				default:
+					console.log("Unknown change type: " + change.type);
+			}
 		}
 	});
+
 
 	const testingCode = "REDACTED";
 	const testingUserID = "REDACTED";
@@ -34,7 +70,7 @@ let first = true;
 				scope: ["channel:manage:redemptions"],
 				expires_in: 13178
 			});*/
-		await createOrUpdateUserFromOAuthToken("REDACTED");
+		//await createOrUpdateUserFromOAuthToken("REDACTED");
 		//await createOrUpdateUserFromAuthCode(testingCode)
 	} catch (e) {
 		if (e instanceof UnauthorizedError) {
