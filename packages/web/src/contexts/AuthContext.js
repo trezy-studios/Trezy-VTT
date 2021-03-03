@@ -128,11 +128,41 @@ const AuthContext = createContext({
 	login: () => {},
 	logout: () => {},
 	register: () => {},
+	validateEmail: () => {},
+	validateUsername: () => {},
 })
 
 const AuthContextProvider = props => {
 	const { children } = props
 	const [state, dispatch] = useReducer(reducer, { ...INITIAL_STATE })
+
+	const validateEmail = useCallback(async email => {
+		let response = null
+
+		try {
+			response = await fetch(`/api/users/validate-email?email=${email}`)
+		} catch (error) {}
+
+		if (response.status === 204) {
+			return true
+		}
+
+		return false
+	}, [])
+
+	const validateUsername = useCallback(async username => {
+		let response = null
+
+		try {
+			response = await fetch(`/api/users/validate-username?username=${username}`)
+		} catch (error) {}
+
+		if (response.status === 204) {
+			return true
+		}
+
+		return false
+	}, [])
 
 	const handleAuthStateChanged = useCallback(user => {
 		dispatch({
@@ -227,6 +257,8 @@ const AuthContextProvider = props => {
 				login,
 				logout,
 				register,
+				validateEmail,
+				validateUsername,
 			}}>
 			{children}
 		</AuthContext.Provider>
