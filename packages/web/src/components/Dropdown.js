@@ -12,9 +12,9 @@ function Dropdown(props){
 	} = props
 
     return (
-        <div class="dropdown">
+        <div className="dropdown">
             <label>{label}: </label>
-            <select class="selectpicker" isDisabled={isDisabled}>
+            <select className="selectpicker" disabled={isDisabled}>
                 {children}
             </select>
         </div>
