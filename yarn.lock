@@ -12042,6 +12042,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"micro-cors@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "micro-cors@npm:0.1.1"
+  checksum: dd1cb65cdb58a057fa8db9dc5c556530730d89fee2e6659de9c9eb69b2259dd3d20caa8e96605d2fc6cca72635fa8bb7c2cc52d9a696553ee2e89f549b4905f5
+  languageName: node
+  linkType: hard
+
 "microevent.ts@npm:~0.1.1":
   version: 0.1.1
   resolution: "microevent.ts@npm:0.1.1"
@@ -18078,6 +18085,8 @@ typescript@3.9.3:
   dependencies:
     classnames: ^2.2.6
     firebase: ^8.2.9
+    firebase-admin: ^9.5.0
+    micro-cors: ^0.1.1
     next: ^10.0.7
     react: ^17.0.1
     react-dom: ^17.0.1
