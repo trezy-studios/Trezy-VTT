@@ -17,7 +17,6 @@ function FormButton(props) {
 	const {
 		children,
 		isDisabled,
-		type,
 	} = props
 	const {
 		isTouched,
@@ -26,8 +25,8 @@ function FormButton(props) {
 
 	return (
 		<Button
-			isDisabled={isDisabled || !isValid || !isTouched}
-			type={type}>
+			{...props}
+			isDisabled={isDisabled || !isValid || !isTouched}>
 			{children}
 		</Button>
 	)
@@ -35,13 +34,11 @@ function FormButton(props) {
 
 FormButton.defaultProps = {
 	isDisabled: false,
-	type: 'button',
 }
 
 FormButton.propTypes = {
 	children: PropTypes.node.isRequired,
 	isDisabled: PropTypes.bool,
-	type: PropTypes.string,
 }
 
 export { FormButton }

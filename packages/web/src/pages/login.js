@@ -37,35 +37,43 @@ export default function LoginPage() {
 	}, [login])
 
 	return (
-		<div>
-			<header><h2>Login</h2></header>
+		<section className="section">
+			<div className="columns">
+				<div className="column is-half is-offset-one-quarter">
+					<Form
+						className="box"
+						initialValues={{
+							email: '',
+							password: '',
+						}}
+						onSubmit={handleSubmit}>
+						<h2 className="title">Login</h2>
 
-			<Form
-				initialValues={{
-					email: '',
-					password: '',
-				}}
-				onSubmit={handleSubmit}>
-				<Field
-					autocomplete="email"
-					id="email"
-					isRequired
-					label="Email"
-					type="email" />
+						<Field
+							autocomplete="email"
+							iconLeft="envelope"
+							id="email"
+							isRequired
+							label="Email"
+							type="email" />
 
-				<Field
-					autocomplete="current-password"
-					id="password"
-					isRequired
-					label="Password"
-					type="password" />
+						<Field
+							autocomplete="current-password"
+							iconLeft="lock"
+							id="password"
+							isRequired
+							label="Password"
+							type="password" />
 
-				<FormButton
-					isDisabled={isLoggingIn}
-					type="submit">
-					Login
-				</FormButton>
-			</Form>
-		</div>
+						<FormButton
+							className="is-primary"
+							isDisabled={isLoggingIn}
+							type="submit">
+							Login
+						</FormButton>
+					</Form>
+				</div>
+			</div>
+		</section>
 	)
 }

@@ -12,24 +12,13 @@ export default function HomePage() {
 	} = useAuth()
 
 	return (
-		<div>
-			<p>Logged in: {isLoggedIn ? 'Yep' : 'Nope'}</p>
-
-			{isLoggedIn && (
-				<Button
-					isDisabled={isLoggingOut}
-					onClick={logout}>
-					Logout
-				</Button>
-			)}
-
-			{!isLoggedIn && (
-				<Button
-					isDisabled={isLoggingIn}
-					onClick={login}>
-					Login
-				</Button>
-			)}
-		</div>
+		<section className="hero is-fullheight">
+			<div className="hero-body">
+				<div>
+					<h2 className="title">Home</h2>
+					<p className="subtitle">The place to be.</p>
+				</div>
+			</div>
+		</section>
 	)
 }

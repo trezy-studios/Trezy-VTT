@@ -58,47 +58,57 @@ export default function RegisterPage() {
 	})
 
 	return (
-		<div>
-			<header><h2>Create Account</h2></header>
+		<section className="section">
+			<div className="columns">
+				<div className="column is-half is-offset-one-quarter">
+					<Form
+						className="box"
+						initialValues={{
+							email: '',
+							password: '',
+							username: '',
+						}}
+						onSubmit={handleSubmit}>
+						<h2 className="title">Create Account</h2>
 
-			<Form
-				initialValues={{
-					email: '',
-					password: '',
-					username: '',
-				}}
-				onSubmit={handleSubmit}>
-				<Field
-					autocomplete="username"
-					id="username"
-					isRequired
-					label="Username"
-					shouldDebounceBy={500}
-					type="username"
-					validate={handleValidateUsername} />
+						<Field
+							autocomplete="username"
+							iconLeft="user"
+							id="username"
+							isRequired
+							label="Username"
+							shouldDebounceBy={500}
+							type="username"
+							validate={handleValidateUsername} />
 
-				<Field
-					autocomplete="email"
-					id="email"
-					isRequired
-					label="Email"
-					shouldDebounceBy={500}
-					type="email" />
+						<Field
+							autocomplete="email"
+							iconLeft="envelope"
+							id="email"
+							isRequired
+							label="Email"
+							shouldDebounceBy={500}
+							type="email"
+							validate={handleValidateEmail} />
 
-				<Field
-					autocomplete="new-password"
-					id="password"
-					isRequired
-					label="Password"
-					minLength={6}
-					type="password" />
+						<Field
+							autocomplete="new-password"
+							iconLeft="lock"
+							id="password"
+							isRequired
+							label="Password"
+							minLength={6}
+							type="password" />
 
-				<FormButton
-					isDisabled={isRegistering}
-					type="submit">
-					Create Account
-				</FormButton>
-			</Form>
-		</div>
+						<FormButton
+							className="is-primary"
+							isDisabled={isRegistering}
+							type="submit">
+							Create Account
+						</FormButton>
+					</Form>
+				</div>
+			</div>
+		</section>
 	)
 }
