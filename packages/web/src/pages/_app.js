@@ -31,6 +31,7 @@ export default function App(props) {
 			<div
 				className="container"
 				id="application-wrapper">
+				<Banner />
 				<Component {...pageProps} />
 			</div>
 		</AuthContextProvider>
