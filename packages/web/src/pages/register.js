@@ -67,8 +67,6 @@ export default function RegisterPage() {
 		<div>
 			<header><h2>Create Account</h2></header>
 
-			<div>isRegistering: {JSON.stringify(isRegistering)}</div>
-
 			<Form
 				initialValues={{
 					email: '',
