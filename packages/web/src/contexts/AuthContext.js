@@ -217,8 +217,6 @@ const AuthContextProvider = props => {
 				method: 'post',
 			})
 			await login(user.email, user.password)
-
-			console.log('TODO: Redirect user to their dashboard on successful registration.')
 		} catch (error) {
 			return dispatch({ type: 'registration failure' })
 		}

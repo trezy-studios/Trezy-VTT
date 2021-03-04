@@ -11644,7 +11644,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.0.1, lodash@npm:^4.17.11, lodash@npm:^4.17.13, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.5":
+"lodash@npm:^4.0.1, lodash@npm:^4.17.11, lodash@npm:^4.17.13, lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.5":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 4983720b9abca930a4a46f18db163d7dad8dd00dbed6db0cc7b499b33b717cce69f80928b27bbb1ff2cbd3b19d251ee90669a8b5ea466072ca81c2ebe91e7468
@@ -18086,8 +18086,10 @@ typescript@3.9.3:
     classnames: ^2.2.6
     firebase: ^8.2.9
     firebase-admin: ^9.5.0
+    lodash: ^4.17.21
     micro-cors: ^0.1.1
     next: ^10.0.7
+    prop-types: ^15.7.2
     react: ^17.0.1
     react-dom: ^17.0.1
     sass: ^1.32.8

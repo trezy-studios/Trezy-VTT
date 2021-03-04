@@ -12,7 +12,9 @@ import classnames from 'classnames'
 
 
 // Local imports
-import { Button } from 'components/Button'
+import { Field } from 'components/Field'
+import { Form } from 'components/Form'
+import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
 import { useRedirectOnLoggedIn } from 'hooks/useRedirectOnLoggedIn'
 
@@ -30,44 +32,36 @@ export default function RegisterPage() {
 
 	useRedirectOnLoggedIn()
 
-	const [email, setEmail] = useState('')
-	const [emailIsValid, setEmailIsValid] = useState(false)
-	const [password, setPassword] = useState('')
-	const [username, setUsername] = useState('')
-	const [usernameIsValid, setUsernameIsValid] = useState(false)
-	const emailRef = useRef(null)
-	const passwordRef = useRef(null)
-	const usernameRef = useRef(null)
+	const handleSubmit = useCallback(formState => {
+		const {
+			isValid,
+			values,
+		} = formState
 
-	const handleEmailChange = useCallback(event => setEmail(event.target.value), [setEmail])
-	const handlePasswordChange = useCallback(event => setPassword(event.target.value), [setPassword])
-	const handleUsernameChange = useCallback(event => setUsername(event.target.value), [setUsername])
-	const handleSubmit = useCallback(event => {
-		event.preventDefault()
-		register({
-			email,
-			password,
-			username,
-		})
-	}, [
-		email,
-		password,
-		username,
-	])
-
-	useEffect(async () => {
-		if (emailRef.current.validity.valid) {
-			const isValid = await validateEmail(email)
-			setEmailIsValid(isValid)
+		if (isValid) {
+			register(values)
 		}
-	}, [email])
+	}, [register])
 
-	useEffect(async () => {
-		if (usernameRef.current.validity.valid) {
-			const isValid = await validateUsername(username)
-			setUsernameIsValid(isValid)
+	const handleValidateEmail = useCallback(async value => {
+		const isValid = await validateEmail(value)
+
+		if (isValid) {
+			return null
 		}
-	}, [username])
+
+		return 'Email is already in use.'
+	})
+
+	const handleValidateUsername = useCallback(async value => {
+		const isValid = await validateUsername(value)
+
+		if (isValid) {
+			return null
+		}
+
+		return 'Username is already taken.'
+	})
 
 	return (
 		<div>
@@ -75,57 +69,42 @@ export default function RegisterPage() {
 
 			<div>isRegistering: {JSON.stringify(isRegistering)}</div>
 
-			<form onSubmit={handleSubmit}>
-				<div
-					className={classnames({
-						field: true,
-						invalid: !usernameIsValid,
-					})}>
-					<label htmlFor="register-username">Username</label>
-					<input
-						autoComplete="username"
-						id="register-username"
-						onChange={handleUsernameChange}
-						ref={usernameRef}
-						required
-						value={username} />
-				</div>
+			<Form
+				initialValues={{
+					email: '',
+					password: '',
+					username: '',
+				}}
+				onSubmit={handleSubmit}>
+				<Field
+					autocomplete="username"
+					id="username"
+					isRequired
+					label="Username"
+					type="username"
+					validate={handleValidateUsername} />
 
-				<div
-					className={classnames({
-						field: true,
-						invalid: !emailIsValid,
-					})}>
-					<label htmlFor="register-email">Email</label>
-					<input
-						autoComplete="email"
-						id="register-email"
-						onChange={handleEmailChange}
-						ref={emailRef}
-						required
-						type="email"
-						value={email} />
-				</div>
+				<Field
+					autocomplete="email"
+					id="email"
+					isRequired
+					label="Email"
+					type="email" />
 
-				<div className="field">
-					<label htmlFor="register-password">Password</label>
-					<input
-						autoComplete="new-password"
-						id="register-password"
-						minLength="6"
-						onChange={handlePasswordChange}
-						ref={passwordRef}
-						required
-						type="password"
-						value={password} />
-				</div>
+				<Field
+					autocomplete="new-password"
+					id="password"
+					isRequired
+					label="Password"
+					minLength="6"
+					type="password" />
 
-				<Button
-					isDisabled={isRegistering || !emailIsValid || !usernameIsValid}
+				<FormButton
+					isDisabled={isRegistering}
 					type="submit">
 					Create Account
-				</Button>
-			</form>
+				</FormButton>
+			</Form>
 		</div>
 	)
 }
