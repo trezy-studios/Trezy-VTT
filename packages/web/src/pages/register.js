@@ -96,7 +96,7 @@ export default function RegisterPage() {
 					id="password"
 					isRequired
 					label="Password"
-					minLength="6"
+					minLength={6}
 					type="password" />
 
 				<FormButton

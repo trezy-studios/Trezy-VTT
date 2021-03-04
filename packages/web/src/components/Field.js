@@ -172,14 +172,8 @@ Field.propTypes = {
 	isDisabled: PropTypes.bool,
 	isRequired: PropTypes.bool,
 	label: PropTypes.string.isRequired,
-	maxLength: PropTypes.oneOfType([
-		PropTypes.number,
-		PropTypes.string,
-	]),
-	minLength: PropTypes.oneOfType([
-		PropTypes.number,
-		PropTypes.string,
-	]),
+	maxLength: PropTypes.number,
+	minLength: PropTypes.number,
 	onChange: PropTypes.func,
 	options: PropTypes.object,
 	shouldDebounceBy: PropTypes.number,
