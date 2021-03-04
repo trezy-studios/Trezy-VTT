@@ -79,6 +79,7 @@ export default function RegisterPage() {
 					id="username"
 					isRequired
 					label="Username"
+					shouldDebounceBy={500}
 					type="username"
 					validate={handleValidateUsername} />
 
@@ -87,6 +88,7 @@ export default function RegisterPage() {
 					id="email"
 					isRequired
 					label="Email"
+					shouldDebounceBy={500}
 					type="email" />
 
 				<Field

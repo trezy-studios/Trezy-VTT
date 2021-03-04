@@ -30,6 +30,7 @@ function Field(props) {
 		label,
 		maxLength,
 		minLength,
+		shouldDebounceBy,
 		type,
 	} = props
 	const {
@@ -68,7 +69,7 @@ function Field(props) {
 		}
 
 		updateValidity(id, errors)
-	}, 500), [])
+	}, shouldDebounceBy), [updateValidity])
 
 	const handleChange = useCallback(event => {
 		updateValue(id, event.target.value)
@@ -161,6 +162,7 @@ Field.defaultProps = {
 	onChange: () => {},
 	options: {},
 	validate: () => {},
+	shouldDebounceBy: 0,
 	type: 'text',
 }
 
@@ -180,6 +182,7 @@ Field.propTypes = {
 	]),
 	onChange: PropTypes.func,
 	options: PropTypes.object,
+	shouldDebounceBy: PropTypes.number,
 	type: PropTypes.string,
 	validate: PropTypes.func,
 }
