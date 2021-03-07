@@ -14,7 +14,9 @@ import Link from 'next/link'
 
 
 // Local imports
+import { Button } from 'components/Button'
 import { useAuth } from 'contexts/AuthContext'
+import { useModals } from 'contexts/ModalsContext'
 
 
 
@@ -24,6 +26,9 @@ export function Banner() {
 	const Router = useRouter()
 	const timeoutID = useRef(null)
 	const { isLoggedIn } = useAuth()
+	const {
+		openModal,
+	} = useModals()
 	const [isExpanded, setIsExpanded] = useState(false)
 
 	const handleExpandClick = useCallback(() => {
@@ -44,6 +49,9 @@ export function Banner() {
 	const handleMouseOut = useCallback(() => {
 		timeoutID.current = setTimeout(close, 1000)
 	}, [close])
+
+	const handleLoginClick = useCallback(() => openModal('login'), [openModal])
+	const handleSignUpClick = useCallback(() => openModal('registration'), [openModal])
 
 	useEffect(() => {
 		Router.events.on('routeChangeComplete', close)
@@ -113,17 +121,17 @@ export function Banner() {
 
 							{!isLoggedIn && (
 								<>
-									<Link href="/register">
-										<a className="button is-primary">
-											<strong>Sign up</strong>
-										</a>
-									</Link>
+									<Button
+										className="is-primary"
+										onClick={handleSignUpClick}>
+										<strong>Sign up</strong>
+									</Button>
 
-									<Link href="/login">
-										<a className="button is-light">
-											Login
-										</a>
-									</Link>
+									<Button
+										className="is-light"
+										onClick={handleLoginClick}>
+										<strong>Login</strong>
+									</Button>
 								</>
 							)}
 						</div>

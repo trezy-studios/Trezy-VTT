@@ -1,0 +1,13 @@
+menu {
+	display: flex;
+	margin: 0;
+	padding: 0;
+
+	.menu-left {
+		margin-right: auto;
+	}
+
+	.menu-right {
+		margin-left: auto;
+	}
+}

@@ -9,6 +9,7 @@ import 'scss/app.scss'
 // Local imports
 import { AuthContextProvider } from 'contexts/AuthContext'
 import { Banner } from 'components/Banner'
+import { ModalsContextProvider } from 'contexts/ModalsContext'
 import { reportWebVitals } from 'helpers/reportWebVitals'
 import { useFontawesome } from 'hooks/useFontawesome'
 
@@ -28,12 +29,16 @@ export default function App(props) {
 
 	return (
 		<AuthContextProvider>
-			<div
-				className="container"
-				id="application-wrapper">
-				<Banner />
-				<Component {...pageProps} />
-			</div>
+			<ModalsContextProvider>
+				<div
+					className="container"
+					id="application-wrapper">
+					<Banner />
+					<Component {...pageProps} />
+				</div>
+
+				<div id="modal-container" />
+			</ModalsContextProvider>
 		</AuthContextProvider>
 	)
 }
