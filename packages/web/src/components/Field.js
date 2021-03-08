@@ -70,7 +70,6 @@ function Field(props) {
 			}
 		}
 
-		console.log('updateValidity', id, errors)
 		updateValidity(id, errors)
 	}, shouldDebounceBy), [updateValidity])
 
