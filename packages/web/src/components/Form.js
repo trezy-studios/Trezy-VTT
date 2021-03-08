@@ -3,20 +3,9 @@ import {
 	createContext,
 	useCallback,
 	useContext,
-	useEffect,
 	useReducer,
 } from 'react'
 import PropTypes from 'prop-types'
-
-
-
-
-
-// Local imports
-import {
-	auth,
-	firestore,
-} from 'helpers/firebase'
 
 
 
