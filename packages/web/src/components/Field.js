@@ -157,7 +157,7 @@ function Field(props) {
 				)}
 
 				{Boolean(iconLeft) && (
-					<span class="icon is-small is-left">
+					<span className="icon is-small is-left">
 						<FontAwesomeIcon
 							fixedWidth
 							icon={iconLeft} />
@@ -165,7 +165,7 @@ function Field(props) {
 				)}
 
 				{Boolean(formErrors[id].length) && (
-					<span class="icon is-small is-right">
+					<span className="icon is-small is-right">
 						<FontAwesomeIcon
 							fixedWidth
 							icon="exclamation-triangle" />
