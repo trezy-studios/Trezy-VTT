@@ -6,6 +6,8 @@ import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
+import {firestore, firebase} from '../helpers/firebase'
+
 
 export default function CampaignPage() {
 
@@ -24,7 +26,7 @@ export default function CampaignPage() {
 		if (isValid) {
 			ValidateAndSaveCampaign(values,user)
 		}
-	}, [ValidateAndSaveCampaign])
+	}, [ValidateAndSaveCampaign, user])
 
 	return (
 		<div>
@@ -62,15 +64,33 @@ export default function CampaignPage() {
 
 function ValidateAndSaveCampaign(campaign,user)
 {
+	if (user.uid && campaign.description && campaign.name)
+	{
+		let isFirst = false;
+    	var campaignsCollection = firestore.collection('campaigns');
+		campaignsCollection
+			.where("ownerID", "==", user.uid)
+			.get()
+			.then((querySnapshot) => {
+				if (querySnapshot.empty)
+				{
+					isFirst = true;
+				}
+				
+				campaignsCollection.add({
+					'name': campaign.name,
+					'description': campaign.description,
+					'gameType': 'D&D 5e',
+					'ownerID': user.uid,
+					'createdAt': firebase.firestore.Timestamp.now(),
+					'updatedAt': firebase.firestore.Timestamp.now(),
+					'isActive': isFirst
+				})
 
-    console.log("To do: Implement saving campaign: " + JSON.stringify(campaign))
-	console.log(user.uid)
-	/*
-    var campaignsCollection = firestore.collection('campaigns');
-    campaignsCollection.add({
-        'name': 'testName',
-        'description': 'testDescription',
-        'gametype': 'DnD 5e'
-    });
-	*/
+			})
+			.catch((error) => {
+				console.log("Error getting campaigns: ", error);
+			});
+	}
+	
 }
