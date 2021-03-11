@@ -21,5 +21,8 @@
 		"vercel:login": "yarn workspace web vercel login",
 		"vercel:link": "yarn workspace web vercel link",
 		"vercel:env:pull": "yarn workspace web vercel env pull"
+	},
+	"dependencies": {
+		"yarn": "^1.22.10"
 	}
 }
