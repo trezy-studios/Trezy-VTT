@@ -1,5 +1,6 @@
 // Module imports
 import { useCallback} from 'react'
+import { useRouter } from 'next/router'
 
 // Local imports
 import { Field } from 'components/Field'
@@ -16,7 +17,13 @@ export default function CampaignPage() {
 		,user
 	} = useAuth()
 
-	//To-do: redirect user to login if not logged in
+	const router = useRouter()
+
+	if (!isLoggedIn)
+	{
+		router.push('/login');
+	}
+
 	const handleSubmit = useCallback(formState => {
 		const {
 			isValid,
@@ -24,7 +31,7 @@ export default function CampaignPage() {
 		} = formState
 
 		if (isValid) {
-			ValidateAndSaveCampaign(values,user)
+			ValidateAndSaveCampaign(values, user, router)
 		}
 	}, [ValidateAndSaveCampaign, user])
 
@@ -62,7 +69,7 @@ export default function CampaignPage() {
 	)
 }
 
-function ValidateAndSaveCampaign(campaign,user)
+function ValidateAndSaveCampaign(campaign, user, router)
 {
 	if (user.uid && campaign.description && campaign.name)
 	{
@@ -77,7 +84,9 @@ function ValidateAndSaveCampaign(campaign,user)
 					isFirst = true;
 				}
 				
-				campaignsCollection.add({
+				let newCampaign = campaignsCollection.doc()
+
+				newCampaign.set({
 					'name': campaign.name,
 					'description': campaign.description,
 					'gameType': 'D&D 5e',
@@ -87,10 +96,16 @@ function ValidateAndSaveCampaign(campaign,user)
 					'isActive': isFirst
 				})
 
+				router.push('/dashboard?campaignID=' + newCampaign.id)
+
 			})
 			.catch((error) => {
 				console.log("Error getting campaigns: ", error);
 			});
+	}
+	else
+	{
+		alert("Unexpected error saving campaign")
 	}
 	
 }
