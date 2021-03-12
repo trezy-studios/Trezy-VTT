@@ -1,5 +1,5 @@
 // Module imports
-import { useCallback} from 'react'
+import { useCallback, useEffect} from 'react'
 import { useRouter } from 'next/router'
 
 // Local imports
@@ -18,11 +18,14 @@ export default function CampaignPage() {
 	} = useAuth()
 
 	const router = useRouter()
-
-	if (!isLoggedIn)
+	useEffect(() => 
 	{
-		router.push('/login');
-	}
+		if (!isLoggedIn)
+		{
+			router.push('/login');
+		}
+	})
+
 
 	const handleSubmit = useCallback(formState => {
 		const {
