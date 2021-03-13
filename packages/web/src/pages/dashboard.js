@@ -10,7 +10,7 @@ export default function DashboardPage() {
 				Dashboard
 			</div>
 			<div>
-			<Link href="/campaign">
+			<Link href='/campaign'>
 				<a>Create New Campaign</a>
 			</Link>
 			</div>
