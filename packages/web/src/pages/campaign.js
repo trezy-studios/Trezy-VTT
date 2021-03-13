@@ -7,11 +7,9 @@ import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
-import {firestore, firebase} from '../helpers/firebase'
-
+import * as campaignHelper from '../helpers/campaign'
 
 export default function CampaignPage() {
-
 	const {
 		isLoggedIn
 		,user
@@ -72,43 +70,17 @@ export default function CampaignPage() {
 	)
 }
 
-function ValidateAndSaveCampaign(campaign, user, router)
+async function ValidateAndSaveCampaign(campaign, user, router)
 {
-	if (user.uid && campaign.description && campaign.name)
+	campaign.ownerID = user.uid
+	campaign.gameType = 'D&D 5e'
+	try 
 	{
-		let isFirst = false;
-    	var campaignsCollection = firestore.collection('campaigns');
-		campaignsCollection
-			.where("ownerID", "==", user.uid)
-			.get()
-			.then((querySnapshot) => {
-				if (querySnapshot.empty)
-				{
-					isFirst = true;
-				}
-				
-				let newCampaign = campaignsCollection.doc()
-
-				newCampaign.set({
-					'name': campaign.name,
-					'description': campaign.description,
-					'gameType': 'D&D 5e',
-					'ownerID': user.uid,
-					'createdAt': firebase.firestore.Timestamp.now(),
-					'updatedAt': firebase.firestore.Timestamp.now(),
-					'isActive': isFirst
-				})
-
-				router.push('/dashboard?campaignID=' + newCampaign.id)
-
-			})
-			.catch((error) => {
-				console.log("Error getting campaigns: ", error);
-			});
+		let newCampaign = await campaignHelper.createCampaign(campaign);
+		router.push('/dashboard?campaignID=' + newCampaign.id)
 	}
-	else
+	catch(e)
 	{
-		alert("Unexpected error saving campaign")
+		alert("Unexpected error saving campaign: " + e)
 	}
-	
 }
