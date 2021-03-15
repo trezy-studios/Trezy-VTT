@@ -1,6 +1,7 @@
 // Local imports
 import {
 	auth,
+	firebase,
 	firestore,
 } from 'helpers/firebase.admin'
 import { createEndpoint } from 'helpers/createEndpoint'
@@ -31,6 +32,9 @@ export const handler = async (request, response) => {
 		campaign.isActive = !activeCampaigns.docs.length
 		campaign.ownerID = user.uid
 		campaign.playerIDs = []
+
+		campaign.createdAt = firebase.firestore.FieldValue.serverTimestamp()
+		campaign.updatedAt = firebase.firestore.FieldValue.serverTimestamp()
 
 		const newCampaign = await campaignsCollection.add(campaign)
 
