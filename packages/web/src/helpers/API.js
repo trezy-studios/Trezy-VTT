@@ -19,52 +19,54 @@ async function apiFetch(options) {
 
 	if (body) {
 		fetchOptions.headers['Content-Type'] = 'application/json'
-	}
-
-	const firebaseAuthToken = Cookies.get('firebaseAuthToken')
-
-	if (firebaseAuthToken) {
-		fetchOptions.headers.Authorization = `Bearer ${firebaseAuthToken}`
+		fetchOptions.body = JSON.stringify(body)
 	}
 
 	try {
-		await fetch(`/api${route}`, fetchOptions)
+		let response = await fetch(`/api${route}`, fetchOptions)
+		return response
 	} catch (error) {
 		return error
 	}
 }
 
-export async function delete(options) {
-	apiFetch({
-		...options,
-		method: 'delete',
-	})
+const API = {
+	delete(options) {
+		return apiFetch({
+			...options,
+			method: 'delete',
+		})
+	},
+
+	get(options) {
+		return apiFetch({
+			...options,
+			method: 'get',
+		})
+	},
+
+	patch(options) {
+		return apiFetch({
+			...options,
+			method: 'patch',
+		})
+	},
+
+	post(options) {
+		return apiFetch({
+			...options,
+			method: 'post',
+		})
+	},
+
+	put(options) {
+		return apiFetch({
+			...options,
+			method: 'put',
+		})
+	},
 }
 
-export async function get(options) {
-	apiFetch({
-		...options,
-		method: 'get',
-	})
-}
 
-export async function patch(options) {
-	apiFetch({
-		...options,
-		method: 'patch',
-	})
-}
 
-export async function post(options) {
-	apiFetch({
-		...options,
-		method: 'post',
-	})
-}
-
-export async function put(options) {
-	apiFetch({
-		...options,
-		method: 'put',
-	})
-}
+export default API
