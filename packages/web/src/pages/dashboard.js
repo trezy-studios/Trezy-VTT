@@ -27,7 +27,7 @@ export default function DashboardPage() {
 				</h2>
 
 				<Button
-					className="is-primary  level-right"
+					className="is-primary level-right"
 					onClick={handleCreateCampaignClick}>
 					Create Campaign
 				</Button>

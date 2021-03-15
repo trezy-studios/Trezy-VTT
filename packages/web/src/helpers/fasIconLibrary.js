@@ -1,4 +1,5 @@
 export {
+	faAngleDown,
 	faEnvelope,
 	faExclamationCircle,
 	faExclamationTriangle,
