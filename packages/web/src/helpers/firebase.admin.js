@@ -42,12 +42,6 @@ if (!auth) {
 
 if (!firestore) {
 	firestore = app?.firestore()
-
-	if (process.env.NEXT_PUBLIC_CURRENT_DEV) {
-		firestore = firestore
-			.collection('dev')
-			.doc(process.env.NEXT_PUBLIC_CURRENT_DEV)
-	}
 }
 
 
