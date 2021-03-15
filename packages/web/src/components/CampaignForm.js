@@ -42,6 +42,7 @@ function CampaignForm(props) {
 					gameType: 'D&D 5e',
 					ownerID: user.uid,
 				})
+				closeModal('campaign')
 				Router.push(`/campaigns/${newCampaign.id}`)
 			} catch(error) {
 				alert(`Unexpected error saving campaign: ` + error)
