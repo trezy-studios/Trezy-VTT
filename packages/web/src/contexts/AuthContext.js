@@ -17,6 +17,7 @@ import {
 	auth,
 	firestore,
 } from 'helpers/firebase'
+import * as Cookies from 'helpers/Cookies'
 
 
 
@@ -164,7 +165,13 @@ const AuthContextProvider = props => {
 		return false
 	}, [])
 
-	const handleAuthStateChanged = useCallback(user => {
+	const handleAuthStateChanged = useCallback(async user => {
+		const authToken = await user?.getIdToken()
+
+		if (authToken) {
+			Cookies.set('firebaseAuthToken', authToken)
+		}
+
 		dispatch({
 			payload: user,
 			type: 'auth state changed',
