@@ -9,6 +9,7 @@ import { useCallback } from 'react'
 import { Button } from 'components/Button'
 import { CampaignsList } from 'components/CampaignsList'
 import { useModals } from 'contexts/ModalsContext'
+import { useRedirectOnLoggedOut } from 'hooks/useRedirectOnLoggedOut'
 
 
 
@@ -18,6 +19,8 @@ export default function DashboardPage() {
 	const { openModal } = useModals()
 
 	const handleCreateCampaignClick = useCallback(() => openModal('campaign'), [openModal])
+
+	useRedirectOnLoggedOut()
 
 	return (
 		<section className="section">

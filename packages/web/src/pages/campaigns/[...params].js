@@ -18,6 +18,7 @@ import { CampaignPlayerList } from 'components/CampaignPage/CampaignPlayerList'
 import { CampaignRewards } from 'components/CampaignPage/CampaignRewards'
 import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { useCampaigns } from 'contexts/CampaignsContext'
+import { useRedirectOnLoggedOut } from 'hooks/useRedirectOnLoggedOut'
 
 
 
@@ -33,6 +34,8 @@ export default function CampaignDashboardPage() {
 		campaigns,
 		isLoaded: isCampaignsLoaded,
 	} = useCampaigns()
+
+	useRedirectOnLoggedOut()
 
 	const campaign = campaigns?.[campaignID]
 
