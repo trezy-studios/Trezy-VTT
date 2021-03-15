@@ -170,6 +170,8 @@ const AuthContextProvider = props => {
 
 		if (authToken) {
 			Cookies.set('firebaseAuthToken', authToken)
+		} else {
+			Cookies.remove('firebaseAuthToken')
 		}
 
 		dispatch({
