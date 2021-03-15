@@ -21,18 +21,14 @@ export default function DashboardPage() {
 	const handleCreateCampaignClick = useCallback(() => openModal('campaign'), [openModal])
 
 	return (
-		<div>
-			<div>
-				Dashboard
-			</div>
-			<div>
-				<Button
-					className="is-primary"
-					onClick={handleCreateCampaignClick}>
-					<strong>Create Campaign</strong>
-				</Button>
-			</div>
-		</div>
+		<section className="section">
+			<h2 className="title">Dashboard</h2>
 
+			<Button
+				className="is-primary"
+				onClick={handleCreateCampaignClick}>
+				Create Campaign
+			</Button>
+		</section>
 	)
 }
