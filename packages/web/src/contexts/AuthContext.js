@@ -17,6 +17,7 @@ import {
 	auth,
 	firestore,
 } from 'helpers/firebase'
+import * as Cookies from 'helpers/Cookies'
 
 
 
@@ -164,7 +165,15 @@ const AuthContextProvider = props => {
 		return false
 	}, [])
 
-	const handleAuthStateChanged = useCallback(user => {
+	const handleAuthStateChanged = useCallback(async user => {
+		const authToken = await user?.getIdToken()
+
+		if (authToken) {
+			Cookies.set('firebaseAuthToken', authToken)
+		} else {
+			Cookies.remove('firebaseAuthToken')
+		}
+
 		dispatch({
 			payload: user,
 			type: 'auth state changed',
@@ -200,7 +209,7 @@ const AuthContextProvider = props => {
 		dispatch({ type: 'attempt logout' })
 
 		try {
-			// await auth.logout()
+			await auth.signOut()
 			return dispatch({ type: 'logout success' })
 		} catch (error) {
 			return dispatch({ type: 'logout failure' })

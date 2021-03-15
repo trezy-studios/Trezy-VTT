@@ -16,8 +16,8 @@ import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
+import { useCampaigns } from 'contexts/CampaignsContext'
 import { useModals } from 'contexts/ModalsContext'
-import * as campaignHelper from 'helpers/campaign'
 
 
 
@@ -26,6 +26,7 @@ import * as campaignHelper from 'helpers/campaign'
 function CampaignForm(props) {
 	const { isModal } = props
 	const { closeModal } = useModals()
+	const { createCampaign } = useCampaigns()
 	const { user } = useAuth()
 	const Router = useRouter()
 
@@ -37,24 +38,21 @@ function CampaignForm(props) {
 
 		if (isValid) {
 			try {
-				const newCampaign = await campaignHelper.createCampaign({
-					...values,
-					gameType: 'D&D 5e',
-					ownerID: user.uid,
-				})
+				const newCampaignID = await createCampaign({ ...values })
 				closeModal('campaign')
-				Router.push(`/campaigns/${newCampaign.id}`)
+				Router.push(`/campaigns/${newCampaignID}`)
 			} catch(error) {
 				alert(`Unexpected error saving campaign: ` + error)
 			}
 		}
-	}, [user])
+	}, [createCampaign])
 
 	return (
 		<Form
 			initialValues={{
-				name: '',
 				description: '',
+				gameID: 'dnd5e',
+				name: '',
 			}}
 			onSubmit={handleSubmit}>
 			<Field
@@ -69,6 +67,12 @@ function CampaignForm(props) {
 				label="Description"
 				type="text"
 				maxLength={300} />
+
+			<Field
+				id="gameID"
+				label="Game"
+				type="hidden"
+				value="dnd5e" />
 
 			<menu type="toolbar">
 				<div className="menu-right">

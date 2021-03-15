@@ -20,6 +20,7 @@ import {
 import { generatePatchFromSnapshot } from 'helpers/generatePatchFromSnapshot'
 import { generateStateFromSnapshotPatch } from 'helpers/generateStateFromSnapshotPatch'
 import { useAuth } from 'contexts/AuthContext'
+import API from 'helpers/API'
 
 
 
@@ -65,6 +66,7 @@ function reducer(state, action) {
 
 const CampaignsContext = createContext({
 	...INITIAL_STATE,
+	createCampaign: () => {},
 })
 
 const CampaignsContextProvider = props => {
@@ -75,6 +77,23 @@ const CampaignsContextProvider = props => {
 		user: currentUser,
 	} = useAuth()
 	const [state, dispatch] = useReducer(reducer, { ...INITIAL_STATE })
+
+	/**
+	 * Saves a new campaign to the firestore campaigns collection
+	 * @param {*} campaign Campaign object that we expect to be populated
+	 * with a name, game type, description, and owner ID
+	 * @returns If successful, the ID of the new campaign object
+	 * Otherwise, null
+	 */
+	const createCampaign = useCallback(async campaign => {
+		const response = await API.post({
+			body: campaign,
+			route: '/campaigns/new',
+		})
+		const responseJSON = await response.json()
+
+		return responseJSON.id
+	}, [])
 
 	const handleCampaignSnapshot = useCallback(snapshot => {
 		const patch = generatePatchFromSnapshot(snapshot)
@@ -88,7 +107,7 @@ const CampaignsContextProvider = props => {
 	}, [dispatch])
 
 	useEffect(() => {
-		if (isAuthLoaded && isLoggedIn) {
+		if (isAuthLoaded && isLoggedIn && currentUser) {
 			const unsubscribers = []
 
 			const ownedCampaignsWatcher = firestore
@@ -107,6 +126,7 @@ const CampaignsContextProvider = props => {
 			return () => unsubscribers.forEach(unsubscribe => unsubscribe())
 		}
 	}, [
+		currentUser,
 		handleCampaignSnapshot,
 		isLoggedIn,
 	])
@@ -115,6 +135,7 @@ const CampaignsContextProvider = props => {
 		<CampaignsContext.Provider
 			value={{
 				...state,
+				createCampaign,
 			}}>
 			{children}
 		</CampaignsContext.Provider>

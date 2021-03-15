@@ -115,6 +115,23 @@ function Field(props) {
 		isDisabled,
 	])
 
+	useEffect(() => {
+		if (
+			(type === 'hidden') |
+			(!isRequired && !values[id])
+		) {
+			updateValidity(id, [])
+		}
+	}, [])
+
+	if (type === 'hidden') {
+		return (
+			<input
+				type={type}
+				value={values[id]} />
+		)
+	}
+
 	return (
 		<div
 			className={classnames({
