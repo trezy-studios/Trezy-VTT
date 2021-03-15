@@ -12,6 +12,7 @@ import PropTypes from 'prop-types'
 
 
 // Local imports
+import { CampaignModal } from 'components/CampaignModal'
 import { LoginModal } from 'components/LoginModal'
 import { RegistrationModal } from 'components/RegistrationModal'
 
@@ -94,6 +95,10 @@ const ModalsContextProvider = props => {
 				openModal,
 			}}>
 			{children}
+
+			{state.modalStates.campaign && (
+				<CampaignModal />
+			)}
 
 			{state.modalStates.login && (
 				<LoginModal />
