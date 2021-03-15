@@ -1988,6 +1988,61 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-common-types@npm:^0.2.34":
+  version: 0.2.34
+  resolution: "@fortawesome/fontawesome-common-types@npm:0.2.34"
+  checksum: cbfa1ad00fc80bc162a74c793bd96773001908c94316f0ac817b43e819334e42b21d35db47f78ff542f5e4397d394d7f68c0cbf7a7bf0719b0554cc6dea11cd8
+  languageName: node
+  linkType: hard
+
+"@fortawesome/fontawesome-svg-core@npm:^1.2.34":
+  version: 1.2.34
+  resolution: "@fortawesome/fontawesome-svg-core@npm:1.2.34"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": ^0.2.34
+  checksum: 56d5608cfa05c1449ec5f19fda06c46f9c851c888dee92b8401c811f18a8fdf50ca7814dafd30ec5a89789a029143a00b17c71f3dc5b2adacfe38e259b945064
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-brands-svg-icons@npm:^5.15.2":
+  version: 5.15.2
+  resolution: "@fortawesome/free-brands-svg-icons@npm:5.15.2"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": ^0.2.34
+  checksum: ccc4b05113caf94eb7a67cb80ad0af025b6d7526638254b885fd023cd59612e8c070b4f253c4038d1e13ca4dbb6304f811dddc10a49d88c986baba21fa0008ef
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-regular-svg-icons@npm:^5.15.2":
+  version: 5.15.2
+  resolution: "@fortawesome/free-regular-svg-icons@npm:5.15.2"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": ^0.2.34
+  checksum: a24ae419a3406cfa71787bb677b44a687fe6a32f753e066fd451a56814cd05647a025d8d86130490675ab0ff4538c470a6f6d3b2b73a7b50c658120fc82a4525
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-solid-svg-icons@npm:^5.15.2":
+  version: 5.15.2
+  resolution: "@fortawesome/free-solid-svg-icons@npm:5.15.2"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": ^0.2.34
+  checksum: 7fe1cc0287170a1c39d4157e2830064bfcd986d3e1c350b2230f8145375118837229c0e54fbe3516bb3a5810a44520ad6087e4a08e4b36789de93e6b7a98c5e8
+  languageName: node
+  linkType: hard
+
+"@fortawesome/react-fontawesome@npm:^0.1.14":
+  version: 0.1.14
+  resolution: "@fortawesome/react-fontawesome@npm:0.1.14"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    "@fortawesome/fontawesome-svg-core": ^1.2.32
+    react: ">=16.x"
+  checksum: 8e9f2b94d360e82a3cafa5ff660461a012bead11279bd37dd12910bbf084bf0dd997db439c254a318106b69666ff6b3c749982f972ab7da0f7578a1d857d94cf
+  languageName: node
+  linkType: hard
+
 "@google-cloud/common@npm:^3.6.0":
   version: 3.6.0
   resolution: "@google-cloud/common@npm:3.6.0"
@@ -5435,6 +5490,13 @@ __metadata:
   version: 3.0.0
   resolution: "builtin-status-codes@npm:3.0.0"
   checksum: 8e2872a69ae05c6a24adc3b6dd4c340f077ea842fc8115ab5b4896f3ab68cf38f56438d430273efd152def59313fd8ca3a35bdad4c3e88b8bb88ba4a371b3866
+  languageName: node
+  linkType: hard
+
+"bulma@npm:^0.9.2":
+  version: 0.9.2
+  resolution: "bulma@npm:0.9.2"
+  checksum: 665399bc30fc42c46fe8a59927b010abc42d47c64893ebdf152a50d2412ee02789c1b3931ed9c2b67c4d00546ea758d5c7c57466846935ee5071ae225a259345
   languageName: node
   linkType: hard
 
@@ -15542,8 +15604,6 @@ fsevents@^1.2.7:
 "root@workspace:.":
   version: 0.0.0-use.local
   resolution: "root@workspace:."
-  dependencies:
-    yarn: ^1.22.10
   languageName: unknown
   linkType: soft
 
@@ -18085,6 +18145,12 @@ typescript@3.9.3:
   version: 0.0.0-use.local
   resolution: "web@workspace:packages/web"
   dependencies:
+    "@fortawesome/fontawesome-svg-core": ^1.2.34
+    "@fortawesome/free-brands-svg-icons": ^5.15.2
+    "@fortawesome/free-regular-svg-icons": ^5.15.2
+    "@fortawesome/free-solid-svg-icons": ^5.15.2
+    "@fortawesome/react-fontawesome": ^0.1.14
+    bulma: ^0.9.2
     classnames: ^2.2.6
     firebase: ^8.2.9
     firebase-admin: ^9.5.0
@@ -18463,16 +18529,6 @@ typescript@3.9.3:
   version: 1.10.0
   resolution: "yaml@npm:1.10.0"
   checksum: d4cc9f9724f8d0aebc2cf52e4e6aa7059f12d50deb54b5225d103462fb2af36e5c0bb419101ca4b1f0cd3b4db9e4139cf2c690e863ac6227648d39d6f4e2522c
-  languageName: node
-  linkType: hard
-
-"yarn@npm:^1.22.10":
-  version: 1.22.10
-  resolution: "yarn@npm:1.22.10"
-  bin:
-    yarn: bin/yarn.js
-    yarnpkg: bin/yarn.js
-  checksum: e43c2102576ac3d79f58f6cddc36726e39d54357bbdd2b9af8ad94d8368e63170555acb4652af08a04354e1a92555d5b293936f9d9b3c8b066872ac11f32cb29
   languageName: node
   linkType: hard
 

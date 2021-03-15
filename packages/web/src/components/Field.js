@@ -13,6 +13,7 @@ import PropTypes from 'prop-types'
 
 
 // Local imports
+import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { useForm } from 'components/Form'
 
 
@@ -22,6 +23,7 @@ import { useForm } from 'components/Form'
 function Field(props) {
 	const {
 		autocomplete,
+		iconLeft,
 		id,
 		isDisabled,
 		isRequired,
@@ -34,7 +36,7 @@ function Field(props) {
 		type,
 	} = props
 	const {
-		errors,
+		errors: formErrors,
 		updateValidity,
 		updateValue,
 		values,
@@ -119,31 +121,64 @@ function Field(props) {
 				field: true,
 				'radio-group': type === 'radio',
 			})}>
-			<label htmlFor={id}>{label}</label>
+			<label
+				className="label"
+				htmlFor={id}>
+				{label}
+			</label>
 
-			{(type === 'radio') && (
-				<ol className="radio-options">
-					{Object.entries(options).map(mapOption)}
-				</ol>
-			)}
+			<div
+				className={classnames({
+					control: true,
+					'has-icons-left': iconLeft,
+					'has-icons-right': formErrors[id].length,
+				})}>
+				{(type === 'radio') && (
+					<ol className="radio-options">
+						{Object.entries(options).map(mapOption)}
+					</ol>
+				)}
 
-			{(type !== 'radio') && (
-				<input
-					autoComplete={autocomplete}
-					disabled={isDisabled}
-					id={id}
-					maxLength={maxLength}
-					minLength={minLength}
-					onChange={handleChange}
-					required={isRequired}
-					type={type}
-					value={values[id]} />
-			)}
+				{(type !== 'radio') && (
+					<input
+						autoComplete={autocomplete}
+						className={classnames({
+							input: true,
+							'is-danger': formErrors[id].length,
+						})}
+						disabled={isDisabled}
+						id={id}
+						maxLength={maxLength}
+						minLength={minLength}
+						onChange={handleChange}
+						required={isRequired}
+						type={type}
+						value={values[id]} />
+				)}
 
-			{Boolean(errors[id].length) && (
+				{Boolean(iconLeft) && (
+					<span className="icon is-small is-left">
+						<FontAwesomeIcon
+							fixedWidth
+							icon={iconLeft} />
+					</span>
+				)}
+
+				{Boolean(formErrors[id].length) && (
+					<span className="icon is-small is-right">
+						<FontAwesomeIcon
+							fixedWidth
+							icon="exclamation-triangle" />
+					</span>
+				)}
+			</div>
+
+			{Boolean(formErrors[id].length) && (
 				<ul>
-					{errors[id].map(error => (
-						<li key={error}>
+					{formErrors[id].map(error => (
+						<li
+							className="help is-danger"
+							key={error}>
 							{error}
 						</li>
 					))}
@@ -155,6 +190,7 @@ function Field(props) {
 
 Field.defaultProps = {
 	autocomplete: null,
+	iconLeft: null,
 	isDisabled: false,
 	isRequired: false,
 	maxLength: null,
@@ -168,6 +204,10 @@ Field.defaultProps = {
 
 Field.propTypes = {
 	autocomplete: PropTypes.string,
+	iconLeft: PropTypes.oneOfType([
+		PropTypes.array,
+		PropTypes.string,
+	]),
 	id: PropTypes.string.isRequired,
 	isDisabled: PropTypes.bool,
 	isRequired: PropTypes.bool,

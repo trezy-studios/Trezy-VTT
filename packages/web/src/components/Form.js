@@ -3,20 +3,9 @@ import {
 	createContext,
 	useCallback,
 	useContext,
-	useEffect,
 	useReducer,
 } from 'react'
 import PropTypes from 'prop-types'
-
-
-
-
-
-// Local imports
-import {
-	auth,
-	firestore,
-} from 'helpers/firebase'
 
 
 
@@ -96,6 +85,7 @@ const FormContext = createContext({
 const Form = props => {
 	const {
 		children,
+		className,
 		initialValues,
 		onSubmit,
 	} = props
@@ -160,7 +150,9 @@ const Form = props => {
 				updateValidity,
 				updateValue,
 			}}>
-			<form onSubmit={handleSubmit}>
+			<form
+				className={className}
+				onSubmit={handleSubmit}>
 				{children}
 			</form>
 		</FormContext.Provider>
@@ -168,12 +160,14 @@ const Form = props => {
 }
 
 Form.propTypes = {
+	className: '',
 	initialValues: {},
 	onSubmit: () => {},
 }
 
 Form.propTypes = {
 	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 	initialValues: PropTypes.object,
 	onSubmit: PropTypes.func,
 }
