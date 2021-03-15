@@ -209,7 +209,7 @@ const AuthContextProvider = props => {
 		dispatch({ type: 'attempt logout' })
 
 		try {
-			// await auth.logout()
+			await auth.signOut()
 			return dispatch({ type: 'logout success' })
 		} catch (error) {
 			return dispatch({ type: 'logout failure' })

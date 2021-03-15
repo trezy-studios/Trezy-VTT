@@ -25,7 +25,10 @@ import { useModals } from 'contexts/ModalsContext'
 export function Banner() {
 	const Router = useRouter()
 	const timeoutID = useRef(null)
-	const { isLoggedIn } = useAuth()
+	const {
+		isLoggedIn,
+		logout,
+	} = useAuth()
 	const {
 		openModal,
 	} = useModals()
@@ -112,11 +115,11 @@ export function Banner() {
 					<div className="navbar-item">
 						<div className="buttons">
 							{isLoggedIn && (
-								<Link href="/login">
-									<a className="button is-light">
-										Logout
-									</a>
-								</Link>
+								<Button
+									className="is-light"
+									onClick={logout}>
+									<strong>Logout</strong>
+								</Button>
 							)}
 
 							{!isLoggedIn && (
