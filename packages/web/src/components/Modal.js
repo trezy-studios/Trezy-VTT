@@ -33,7 +33,7 @@ function Modal(props) {
 
 	useEffect(() => {
 		const handleEscape = event => {
-			if (event.code.toLowerCase() === 'escape') {
+			if (event.code?.toLowerCase() === 'escape') {
 				close()
 			}
 		}
