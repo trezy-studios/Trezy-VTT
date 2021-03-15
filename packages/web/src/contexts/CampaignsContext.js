@@ -107,7 +107,7 @@ const CampaignsContextProvider = props => {
 	}, [dispatch])
 
 	useEffect(() => {
-		if (isAuthLoaded && isLoggedIn) {
+		if (isAuthLoaded && isLoggedIn && currentUser) {
 			const unsubscribers = []
 
 			const ownedCampaignsWatcher = firestore
@@ -126,6 +126,7 @@ const CampaignsContextProvider = props => {
 			return () => unsubscribers.forEach(unsubscribe => unsubscribe())
 		}
 	}, [
+		currentUser,
 		handleCampaignSnapshot,
 		isLoggedIn,
 	])
