@@ -26,7 +26,7 @@ export default function DashboardPage() {
 		<section className="section">
 			<header className="level">
 				<h2 className="title level-left">
-					Dashboard
+					My Campaigns
 				</h2>
 
 				<Button
