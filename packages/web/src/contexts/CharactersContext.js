@@ -78,6 +78,14 @@ const CharactersContextProvider = props => {
 	} = useAuth()
 	const [state, dispatch] = useReducer(reducer, { ...INITIAL_STATE })
 
+
+	/**
+	 * Saves a new character to the firestore characters collection
+	 * @param {*} character Character object that we expect to be populated
+	 * with a name, game type, description, and owner ID
+	 * @returns If successful, the ID of the new character object
+	 * Otherwise, null
+	 */
 	const createCharacter = useCallback(async character => {
 		const response = await API.post({
 			body: character,
