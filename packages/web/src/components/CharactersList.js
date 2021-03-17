@@ -1,38 +1,36 @@
 // Local imports
-// import { CharacterSummary } from 'components/CharacterSummary'
-// import { useCharacters } from 'contexts/CharactersContext'
+import { JSONPreview } from 'components/JSONPreview'
+import { useCharacters } from 'contexts/CharactersContext'
 
 
 
 
 
-// function mapCharacterItem([id, campaign]) {
-// 	return (
-// 		<li
-// 			className="column is-full-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd"
-// 			key={id}>
-// 			<CharacterSummary
-// 				id={id}
-// 				campaign={campaign} />
-// 		</li>
-// 	)
-// }
+function mapCharacterItem([id, character]) {
+	return (
+		<li
+			className="column is-full-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd"
+			key={id}>
+			<JSONPreview>{character}</JSONPreview>
+		</li>
+	)
+}
 
 export function CharactersList() {
-	// const {
-	// 	campaigns,
-	// 	isLoaded: isCharactersLoaded,
-	// } = useCharacters()
+	const {
+		characters,
+		isLoaded: isCharactersLoaded,
+	} = useCharacters()
 
-	// if (!isCharactersLoaded) {
-	// 	return (
-	// 		<div>Loading...</div>
-	// 	)
-	// }
+	if (!isCharactersLoaded) {
+		return (
+			<div>Loading...</div>
+		)
+	}
 
 	return (
 		<ul className="columns is-multiline">
-			{/* {Object.entries(campaigns).map(mapCharacterItem)} */}
+			{Object.entries(characters).map(mapCharacterItem)}
 		</ul>
 	)
 }
