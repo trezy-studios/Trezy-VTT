@@ -38,9 +38,7 @@ function CharacterForm(props) {
 
 		if (isValid) {
 			try {
-				console.log('creating character', values)
 				const newCharacterID = await createCharacter({ ...values })
-				console.log('created character', newCharacterID)
 				closeModal('character')
 				Router.push(`/characters/${newCharacterID}`)
 			} catch(error) {
