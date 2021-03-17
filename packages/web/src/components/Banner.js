@@ -98,7 +98,7 @@ export function Banner() {
 				<div className="navbar-start">
 					<Link href="/">
 						<a className="navbar-item">
-							Home
+							{'Home'}
 						</a>
 					</Link>
 
@@ -136,7 +136,7 @@ export function Banner() {
 								<Button
 									className="is-light"
 									onClick={logout}>
-									<strong>Logout</strong>
+									<strong>{'Logout'}</strong>
 								</Button>
 							)}
 
@@ -145,13 +145,13 @@ export function Banner() {
 									<Button
 										className="is-primary"
 										onClick={handleSignUpClick}>
-										<strong>Sign up</strong>
+										<strong>{'Sign up'}</strong>
 									</Button>
 
 									<Button
 										className="is-light"
 										onClick={handleLoginClick}>
-										<strong>Login</strong>
+										<strong>{'Login'}</strong>
 									</Button>
 								</>
 							)}
