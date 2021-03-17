@@ -34,7 +34,11 @@ export default function CharacterDashboardPage() {
 
 	useRedirectOnLoggedOut()
 
-	const character = characters?.[characterID]
+	let character = null
+
+	if (characters) {
+		character = { ...characters[characterID] }
+	}
 
 	// TODO: These should exist as dynamic values in the database
 	if (character) {
