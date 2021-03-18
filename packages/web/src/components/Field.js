@@ -75,8 +75,14 @@ function Field(props) {
 	}, shouldDebounceBy), [updateValidity])
 
 	const handleChange = useCallback(event => {
-		updateValue(id, event.target.value)
-		validate(event.target.value, props)
+		let value = event.target.value
+
+		if (type === 'checkbox') {
+			value = event.target.checked
+		}
+
+		updateValue(id, value)
+		validate(value, props)
 	}, [
 		id,
 		updateValue,
