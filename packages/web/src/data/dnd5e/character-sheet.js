@@ -197,10 +197,10 @@ export class CharacterSheet {
 
 		if (isProficient) {
 			score += this.proficiencyBonus
-		}
 
-		if (hasExpertise) {
-			score *= 2
+			if (hasExpertise) {
+				score += this.proficiencyBonus
+			}
 		}
 
 		return score
