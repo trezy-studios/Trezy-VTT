@@ -133,6 +133,22 @@ function Field(props) {
 		)
 	}
 
+	if (type === 'checkbox') {
+		return (
+			<label className="checkbox">
+				<input
+					checked={values[id]}
+					className="checkbox"
+					disabled={isDisabled}
+					id={id}
+					onChange={handleChange}
+					required={isRequired}
+					type={type} />
+				{label}
+			</label>
+		)
+	}
+
 	return (
 		<div
 			className={classnames({
