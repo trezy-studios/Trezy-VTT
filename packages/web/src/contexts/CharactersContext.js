@@ -5,6 +5,7 @@ import {
 	useContext,
 	useEffect,
 	useReducer,
+	useRef,
 } from 'react'
 import PropTypes from 'prop-types'
 
@@ -45,11 +46,20 @@ function reducer(state, action) {
 		...INITIAL_STATE,
 		...state,
 	}
+	let characterSheet = null
 
 	switch (type) {
 		case 'update characters':
 			newState.isLoaded = true
-			newState.characters = generateStateFromSnapshotPatch(newState.characters, payload)
+			newState.characters = generateStateFromSnapshotPatch(newState.characters, payload.patch)
+			Object.values(newState.characters).forEach(character => {
+				const {
+					build,
+					gameID,
+				} = character
+				const CharacterSheet = payload.characterSheets[gameID]
+				character.characterSheet = new CharacterSheet(build)
+			})
 			break
 
 		default:
@@ -76,8 +86,8 @@ const CharactersContextProvider = props => {
 		isLoggedIn,
 		user: currentUser,
 	} = useAuth()
+	const characterSheets = useRef({})
 	const [state, dispatch] = useReducer(reducer, { ...INITIAL_STATE })
-
 
 	/**
 	 * Saves a new character to the firestore characters collection
@@ -96,12 +106,41 @@ const CharactersContextProvider = props => {
 		return responseJSON.id
 	}, [])
 
-	const handleCharacterSnapshot = useCallback(snapshot => {
+	const handleCharacterSnapshot = useCallback(async snapshot => {
 		const patch = generatePatchFromSnapshot(snapshot)
+
+		// Retrieve CharacterSheets for any games that we haven't loaded yet
+		snapshot.docChanges().forEach(change => {
+			const {
+				doc,
+				type,
+			} = change
+
+			if (type !== 'added') {
+				return
+			}
+
+			const { gameID } = doc.data()
+
+			if (!characterSheets.current[gameID]) {
+				characterSheets.current[gameID] = (async () => {
+					const result = await import(`data/${gameID}/character-sheet`)
+					return result.CharacterSheet
+				})()
+			}
+		})
+
+		const characterSheetResults = await Promise.all(Object.values(characterSheets.current))
+		Object.keys(characterSheets.current).forEach((key, index) => {
+			characterSheets.current[key] = characterSheetResults[index]
+		})
 
 		if (patch.length) {
 			dispatch({
-				payload: patch,
+				payload: {
+					characterSheets: characterSheets.current,
+					patch,
+				},
 				type: 'update characters',
 			})
 		}

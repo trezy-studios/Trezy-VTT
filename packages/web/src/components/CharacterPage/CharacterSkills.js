@@ -94,7 +94,7 @@ function CharacterSkills(props) {
 		}
 
 		return (
-			<tr>
+			<tr key={skill}>
 				<th>{SKILL_DISPLAY_NAME[skill]}</th>
 				<td className="has-text-right">
 					{skillScore}
