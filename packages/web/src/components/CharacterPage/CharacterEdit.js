@@ -15,6 +15,32 @@ import { FormButton } from 'components/FormButton'
 
 
 
+// Constants
+const SKILLS = {
+	acrobatics: 'Acrobatics',
+	animalHandling: 'Animal Handling',
+	arcana: 'Arcana',
+	athletics: 'Athletics',
+	deception: 'Deception',
+	history: 'History',
+	insight: 'Insight',
+	intimidation: 'Intimidation',
+	investigation: 'Investigation',
+	medicine: 'Medicine',
+	nature: 'Nature',
+	perception: 'Perception',
+	performance: 'Performance',
+	persuasion: 'Persuasion',
+	religion: 'Religion',
+	sleightOfHand: 'Sleight Of Hand',
+	stealth: 'Stealth',
+	survival: 'Survival',
+}
+
+
+
+
+
 function CharacterEdit(props) {
 	const {
 		build: character,
@@ -24,6 +50,47 @@ function CharacterEdit(props) {
 	const handleAbilityScoresSubmit = useCallback(() => {
 		console.log('handleAbilityScoresSubmit')
 	}, [])
+
+	const handleSkillsSubmit = useCallback(() => {
+		console.log('handleSkillsSubmit')
+	}, [])
+
+	const mapSkill = useCallback(([skill, skillDisplayName]) => {
+		const hasExpertiseFlagName = `${skill}:expert`
+		const isProficientFlagName = `${skill}:proficient`
+
+		return (
+			<div
+				className="panel-block"
+				key={skill}>
+				<span>{skillDisplayName}</span>
+
+				<div className="panel-block-right">
+					<Field
+						id={isProficientFlagName}
+						label="Proficient"
+						type="checkbox"
+						value={character[isProficientFlagName]} />
+
+					<Field
+						id={hasExpertiseFlagName}
+						label="Expert"
+						type="checkbox"
+						value={character[hasExpertiseFlagName]} />
+				</div>
+			</div>
+		)
+	}, [character])
+
+	const reduceSkillsToInitialValues = useCallback((accumulator, skill) => {
+		const isProficientFlagName = `${skill}:proficient`
+		const hasExpertiseFlagName = `${skill}:expert`
+
+		accumulator[isProficientFlagName] = character[isProficientFlagName]
+		accumulator[hasExpertiseFlagName] = character[hasExpertiseFlagName]
+
+		return accumulator
+	}, [character])
 
 	return (
 		<>
@@ -97,13 +164,35 @@ function CharacterEdit(props) {
 
 				<menu type="toolbar">
 					<div className="menu-right">
-						<FormButton
-							className="is-primary"
-							type="submit">
+						<FormButton className="is-primary">
 							{'Save Ability Scores'}
 						</FormButton>
 					</div>
 				</menu>
+			</Form>
+
+			<Form
+				initialValues={Object.keys(SKILLS).reduce(reduceSkillsToInitialValues, {})}
+				onSubmit={handleSkillsSubmit}>
+				<div className="columns is-multiline">
+					<div className="column">
+						<div className="panel">
+							<h3 className="panel-heading">{'Skills'}</h3>
+
+							{Object.entries(SKILLS).map(mapSkill)}
+
+							<menu
+								className="panel-block"
+								type="toolbar">
+								<div className="menu-right">
+									<FormButton className="is-primary">
+										{'Save Skills'}
+									</FormButton>
+								</div>
+							</menu>
+						</div>
+					</div>
+				</div>
 			</Form>
 		</>
 	)

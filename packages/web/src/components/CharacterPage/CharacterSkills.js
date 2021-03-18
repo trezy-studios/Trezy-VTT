@@ -72,7 +72,7 @@ function CharacterSkills(props) {
 	)
 }
 
-CharacterSkills.propTypes ={
+CharacterSkills.propTypes = {
 	character: PropTypes.object.isRequired,
 }
 
