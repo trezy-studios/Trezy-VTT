@@ -193,7 +193,7 @@ export class CharacterSheet {
 		const isProficientFlagName = `${skillName}:proficient`
 		const isProficient = this.character[isProficientFlagName]
 
-		let score = this.calculateAbilityModifier(baseStat)
+		let score = this[`${baseStat}Modifier`]
 
 		if (isProficient) {
 			score += this.proficiencyBonus
@@ -232,6 +232,13 @@ export class CharacterSheet {
 	get intelligence() { return this.character.intelligence }
 	get wisdom() { return this.character.wisdom }
 	get strength() { return this.character.strength }
+
+	get charismaModifier() { return this.calculateAbilityModifier('charisma') }
+	get constitutionModifier() { return this.calculateAbilityModifier('constitution') }
+	get dexterityModifier() { return this.calculateAbilityModifier('dexterity') }
+	get intelligenceModifier() { return this.calculateAbilityModifier('intelligence') }
+	get wisdomModifier() { return this.calculateAbilityModifier('wisdom') }
+	get strengthModifier() { return this.calculateAbilityModifier('strength') }
 
 	get level() {
 		// Each item within the experienceToLevel range represents the experience
