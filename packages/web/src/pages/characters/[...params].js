@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown'
 
 // Local imports
 import { Button } from 'components/Button'
+import { CharacterEdit } from 'components/CharacterPage/CharacterEdit'
 import { CharacterInventory } from 'components/CharacterPage/CharacterInventory'
 import { CharacterSkills } from 'components/CharacterPage/CharacterSkills'
 import { CharacterStats } from 'components/CharacterPage/CharacterStats'
@@ -290,6 +291,17 @@ export default function CharacterDashboardPage() {
 											<a>Backstory</a>
 										</Link>
 									</li>
+
+									<li
+										className={classnames({
+											'is-active': activeTab === 'edit',
+										})}>
+										<Link
+											href={`/characters/${characterID}/edit`}
+											shallow>
+											<a>Edit</a>
+										</Link>
+									</li>
 								</ul>
 							</div>
 
@@ -299,6 +311,10 @@ export default function CharacterDashboardPage() {
 
 							{(activeTab === 'inventory') && (
 								<CharacterInventory character={character} />
+							)}
+
+							{(activeTab === 'edit') && (
+								<CharacterEdit character={character} />
 							)}
 						</div>
 					</div>

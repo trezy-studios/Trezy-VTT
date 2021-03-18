@@ -26,6 +26,7 @@ function Field(props) {
 		iconLeft,
 		id,
 		isDisabled,
+		isCentered,
 		isRequired,
 		onChange,
 		options,
@@ -139,7 +140,10 @@ function Field(props) {
 				'radio-group': type === 'radio',
 			})}>
 			<label
-				className="label"
+				className={classnames({
+					label: true,
+					'has-text-centered': isCentered,
+				})}
 				htmlFor={id}>
 				{label}
 			</label>
@@ -160,6 +164,7 @@ function Field(props) {
 					<input
 						autoComplete={autocomplete}
 						className={classnames({
+							'has-text-centered': isCentered,
 							input: true,
 							'is-danger': formErrors[id].length,
 						})}
