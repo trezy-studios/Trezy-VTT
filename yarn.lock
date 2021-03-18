@@ -14832,7 +14832,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-color@npm:^2.17.0":
+"react-color@npm:^2.17.0, react-color@npm:^2.19.3":
   version: 2.19.3
   resolution: "react-color@npm:2.19.3"
   dependencies:
@@ -15746,6 +15746,8 @@ fsevents@^1.2.7:
 "root@workspace:.":
   version: 0.0.0-use.local
   resolution: "root@workspace:."
+  dependencies:
+    react-color: ^2.19.3
   languageName: unknown
   linkType: soft
 

@@ -34,6 +34,7 @@ function Field(props) {
 		minLength,
 		shouldDebounceBy,
 		type,
+		title,
 	} = props
 	const {
 		errors: formErrors,
@@ -102,7 +103,8 @@ function Field(props) {
 					onChange={handleChange}
 					required={isRequired}
 					type="radio"
-					value={optionValue} />
+					value={optionValue}
+					title={title}/>
 
 				<label htmlFor={optionID}>
 					{component || optionLabel}
@@ -170,7 +172,8 @@ function Field(props) {
 						onChange={handleChange}
 						required={isRequired}
 						type={type}
-						value={values[id]} />
+						value={values[id]}
+						title={title} />
 				)}
 
 				{Boolean(iconLeft) && (
@@ -217,6 +220,7 @@ Field.defaultProps = {
 	validate: () => {},
 	shouldDebounceBy: 0,
 	type: 'text',
+	title: ''
 }
 
 Field.propTypes = {

@@ -2,10 +2,12 @@
 import {
 	useCallback,
 	useEffect,
+    useState,
 } from 'react'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import { useRouter } from 'next/router'
+import { ChromePicker } from 'react-color';
 
 // Local imports
 import { Field } from 'components/Field'
@@ -21,6 +23,7 @@ function RewardForm(props) {
 	const { user } = useAuth()
 	const Router = useRouter()
 
+    let [rewardColor, setRewardColor] = useState(5);
     const redemptionOptions={
         user: { label: 'Per User' },
         stream: { label: 'Per Stream' },
@@ -56,34 +59,43 @@ function RewardForm(props) {
 				isRequired
 				label="Name"
 				type="text"
-				maxLength={25} />
+				maxLength={25}
+                title="Enter a name for Twitch reward" />
 
 			<Field
 				id="cost"
                 isRequired
 				label="Cost"
-				type="number"/>
-
-			<Field
-				id="color"
-				label="Color"
-                type="text"/>
-            <span>
+				type="number"
+                title="Enter channel points cost of reward"/>
+            <div>
              <Field
                 id="maxRedemptions"
-                label="Max Redemptions"
-                type="number"/>
-
-            <Field
-                id="maxRedemptionsPerUser"
-                type="radio"
-                label="Uses Per"
-                options={redemptionOptions}/>
-            </span>
+                label="Max Redemptions Per Stream"
+                type="number"
+                title="Enter maximum number of redemptions per stream for reward"/>
+            <label class="checkbox">
+            <input
+                id="perUser"
+                type="checkbox"
+                title="Check if max redemptions are per user"/>
+                {" Per User"}
+            </label>
+            </div>
             <Field
                 id="cooldown"
                 label="Cooldown"
-                type="number"/>
+                type="number"
+                title="Enter reward cooldown in seconds"/>
+            <Field
+				id="color"
+                label="HiddenColor"
+                type="hidden"
+                value={rewardColor}/>
+            <label className="label">Color</label>
+            <div title="Select a reward color">
+                <ChromePicker color={rewardColor} onChange={(color) => {setRewardColor(color)}}/>
+            </div>
 			<menu type="toolbar">
 				<div className="menu-right">
 					<FormButton
