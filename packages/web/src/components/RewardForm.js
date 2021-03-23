@@ -7,7 +7,7 @@ import {
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import { useRouter } from 'next/router'
-import { ChromePicker } from 'react-color';
+import { ChromePicker } from 'react-color'
 
 // Local imports
 import { Field } from 'components/Field'
@@ -23,7 +23,6 @@ function RewardForm(props) {
 	const { user } = useAuth()
 	const Router = useRouter()
 
-    let [rewardColor, setRewardColor] = useState(5);
     const redemptionOptions={
         user: { label: 'Per User' },
         stream: { label: 'Per Stream' },
@@ -49,9 +48,9 @@ function RewardForm(props) {
 			initialValues={{
 				title: '',
 				cost: '',
-                color: '',
                 maxRedemptions: '',
-                cooldown: ''
+                cooldown: '',
+				color: '',
 			}}
 			onSubmit={handleSubmit}>
 			<Field
@@ -87,15 +86,12 @@ function RewardForm(props) {
                 label="Cooldown"
                 type="number"
                 title="Enter reward cooldown in seconds"/>
-            <Field
+			<Field
 				id="color"
-                label="HiddenColor"
-                type="hidden"
-                value={rewardColor}/>
-            <label className="label">Color</label>
-            <div title="Select a reward color">
-                <ChromePicker color={rewardColor} onChange={(color) => {setRewardColor(color)}}/>
-            </div>
+				label="Color"
+				type="chromepicker"
+				title="Select a reward color"
+			/>
 			<menu type="toolbar">
 				<div className="menu-right">
 					<FormButton

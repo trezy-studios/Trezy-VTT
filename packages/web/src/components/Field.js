@@ -7,6 +7,7 @@ import {
 import debounce from 'lodash/debounce'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
+import { ChromePicker } from 'react-color'
 
 
 
@@ -131,6 +132,21 @@ function Field(props) {
 			<input
 				type={type}
 				value={values[id]} />
+		)
+	}
+
+	if (type === 'chromepicker'){
+		const [color, setColor] = useState(values[id])
+		return (
+		<div classnName="field">
+		<input
+			type="hidden"
+			value={color.hex}/>
+		<label className="label">Color</label>
+		<div title={title}>
+			<ChromePicker color={color} onChange={(color) => {setColor(color)}}/>
+		</div>
+		</div>
 		)
 	}
 
