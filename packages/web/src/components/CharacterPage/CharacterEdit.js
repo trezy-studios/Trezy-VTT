@@ -10,6 +10,7 @@ import PropTypes from 'prop-types'
 import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
+import { useCharacters } from 'contexts/CharactersContext'
 
 
 
@@ -42,18 +43,25 @@ const SKILLS = {
 
 
 function CharacterEdit(props) {
+	const { characterID } = props
+	const {
+		characters,
+		isSavingCharacterSheets,
+		updateCharacterSheet,
+	} = useCharacters()
 	const {
 		build: character,
 		characterSheet,
-	} = props.character
+	} = characters[characterID]
+	const isSaving = isSavingCharacterSheets[characterID]
 
-	const handleAbilityScoresSubmit = useCallback(() => {
-		console.log('handleAbilityScoresSubmit')
-	}, [])
-
-	const handleSkillsSubmit = useCallback(() => {
-		console.log('handleSkillsSubmit')
-	}, [])
+	const handleCharacterSheetSubmit = useCallback(formState => {
+		const { values } = formState
+		updateCharacterSheet(characterID, values)
+	}, [
+		characterID,
+		updateCharacterSheet,
+	])
 
 	const mapSkill = useCallback(([skill, skillDisplayName]) => {
 		const hasExpertiseFlagName = `${skill}:expert`
@@ -105,12 +113,13 @@ function CharacterEdit(props) {
 					strength: characterSheet.strength,
 					wisdom: characterSheet.wisdom,
 				}}
-				onSubmit={handleAbilityScoresSubmit}>
+				onSubmit={handleCharacterSheetSubmit}>
 				<div className="columns is-multiline">
 					<div className="column is-2">
 						<Field
 							id="strength"
 							isCentered
+							isDisabled={isSaving}
 							isRequired
 							label="Strength"
 							type="number" />
@@ -120,6 +129,7 @@ function CharacterEdit(props) {
 						<Field
 							id="dexterity"
 							isCentered
+							isDisabled={isSaving}
 							isRequired
 							label="Dexterity"
 							type="number" />
@@ -129,6 +139,7 @@ function CharacterEdit(props) {
 						<Field
 							id="constitution"
 							isCentered
+							isDisabled={isSaving}
 							isRequired
 							label="Constitution"
 							type="number" />
@@ -138,6 +149,7 @@ function CharacterEdit(props) {
 						<Field
 							id="intelligence"
 							isCentered
+							isDisabled={isSaving}
 							isRequired
 							label="Intelligence"
 							type="number" />
@@ -147,6 +159,7 @@ function CharacterEdit(props) {
 						<Field
 							id="wisdom"
 							isCentered
+							isDisabled={isSaving}
 							isRequired
 							label="Wisdom"
 							type="number" />
@@ -156,6 +169,7 @@ function CharacterEdit(props) {
 						<Field
 							id="charisma"
 							isCentered
+							isDisabled={isSaving}
 							isRequired
 							label="Charisma"
 							type="number" />
@@ -164,7 +178,10 @@ function CharacterEdit(props) {
 
 				<menu type="toolbar">
 					<div className="menu-right">
-						<FormButton className="is-primary">
+						<FormButton
+							className="is-primary"
+							isDisabled={isSaving}
+							type="submit">
 							{'Save Ability Scores'}
 						</FormButton>
 					</div>
@@ -173,7 +190,7 @@ function CharacterEdit(props) {
 
 			<Form
 				initialValues={Object.keys(SKILLS).reduce(reduceSkillsToInitialValues, {})}
-				onSubmit={handleSkillsSubmit}>
+				onSubmit={handleCharacterSheetSubmit}>
 				<div className="columns is-multiline">
 					<div className="column">
 						<div className="panel">
@@ -185,7 +202,9 @@ function CharacterEdit(props) {
 								className="panel-block"
 								type="toolbar">
 								<div className="menu-right">
-									<FormButton className="is-primary">
+									<FormButton
+										className="is-primary"
+										type="submit">
 										{'Save Skills'}
 									</FormButton>
 								</div>
@@ -199,7 +218,7 @@ function CharacterEdit(props) {
 }
 
 CharacterEdit.propTypes = {
-	character: PropTypes.object.isRequired,
+	characterID: PropTypes.string.isRequired,
 }
 
 export { CharacterEdit }

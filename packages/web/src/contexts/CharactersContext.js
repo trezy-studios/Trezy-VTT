@@ -31,6 +31,7 @@ import API from 'helpers/API'
 const INITIAL_STATE = {
 	characters: null,
 	isLoaded: false, // Indicates that the first load has occured
+	isSavingCharacterSheets: {},
 }
 
 
@@ -49,6 +50,18 @@ function reducer(state, action) {
 	let characterSheet = null
 
 	switch (type) {
+		case 'character sheet saved':
+			newState.isSavingCharacterSheets = { ...newState.isSavingCharacterSheets }
+			delete newState.isSavingCharacterSheets[payload]
+			break
+
+		case 'saving character sheet':
+			newState.isSavingCharacterSheets = {
+				...newState.isSavingCharacterSheets,
+				[payload]: true,
+			}
+			break
+
 		case 'update characters':
 			newState.isLoaded = true
 			newState.characters = generateStateFromSnapshotPatch(newState.characters, payload.patch)
@@ -77,6 +90,7 @@ function reducer(state, action) {
 const CharactersContext = createContext({
 	...INITIAL_STATE,
 	createCharacter: () => {},
+	updateCharacterSheet: () => {},
 })
 
 const CharactersContextProvider = props => {
@@ -105,6 +119,25 @@ const CharactersContextProvider = props => {
 
 		return responseJSON.id
 	}, [])
+
+	const updateCharacterSheet = useCallback(async (characterID, characterSheetPatch) => {
+		dispatch({
+			payload: characterID,
+			type: 'saving character sheet',
+		})
+
+		const response = await API.put({
+			body: {
+				build: characterSheetPatch,
+			},
+			route: `/characters/${characterID}`,
+		})
+
+		dispatch({
+			payload: characterID,
+			type: 'character sheet saved',
+		})
+	}, [dispatch])
 
 	const handleCharacterSnapshot = useCallback(async snapshot => {
 		const patch = generatePatchFromSnapshot(snapshot)
@@ -164,6 +197,7 @@ const CharactersContextProvider = props => {
 			value={{
 				...state,
 				createCharacter,
+				updateCharacterSheet,
 			}}>
 			{children}
 		</CharactersContext.Provider>

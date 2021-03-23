@@ -314,7 +314,7 @@ export default function CharacterDashboardPage() {
 							)}
 
 							{(activeTab === 'edit') && (
-								<CharacterEdit character={character} />
+								<CharacterEdit characterID={characterID} />
 							)}
 						</div>
 					</div>
