@@ -137,7 +137,7 @@ function Field(props) {
 	useEffect(() => {
 		// Mark hidden and empty, non-required fields as valid
 		if (
-			(type === 'hidden') ||
+			['hidden','checkbox'].includes(type) ||
 			(!isRequired && !values[id])
 		) {
 			updateValidity(id, [])
