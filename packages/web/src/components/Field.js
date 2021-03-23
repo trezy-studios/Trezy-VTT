@@ -138,13 +138,17 @@ function Field(props) {
 	if (type === 'chromepicker'){
 		const [color, setColor] = useState(values[id])
 		return (
-		<div classnName="field">
-		<input
-			type="hidden"
-			value={color.hex}/>
+		<div className="field">
 		<label className="label">Color</label>
 		<div title={title}>
-			<ChromePicker color={color} onChange={(color) => {setColor(color)}}/>
+			<ChromePicker 
+				color={color} 
+				onChange={(color) => 
+					{
+					setColor(color)
+					updateValue(id, color.hex)
+					validate(color.hex, props)
+					}}/>
 		</div>
 		</div>
 		)

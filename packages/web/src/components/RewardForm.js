@@ -37,6 +37,7 @@ function RewardForm(props) {
 		if (isValid) {
 			try {
 				console.log("Creating reward")
+				console.log(values)
                 closeModal('reward');
 			} catch(error) {
 				alert(`Unexpected error saving reward: ` + error)
