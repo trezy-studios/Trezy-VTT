@@ -34,6 +34,7 @@ function Field(props) {
 		maxLength,
 		minLength,
 		shouldDebounceBy,
+		showLabel,
 		type,
 	} = props
 	const {
@@ -154,18 +155,31 @@ function Field(props) {
 	}
 
 	if (type === 'checkbox') {
+		if (showLabel) {
+			return (
+				<label className="checkbox">
+					<input
+						checked={values[id]}
+						className="checkbox"
+						disabled={isDisabled}
+						id={id}
+						onChange={handleChange}
+						required={isRequired}
+						type={type} />
+					{label}
+				</label>
+			)
+		}
+
 		return (
-			<label className="checkbox">
-				<input
-					checked={values[id]}
-					className="checkbox"
-					disabled={isDisabled}
-					id={id}
-					onChange={handleChange}
-					required={isRequired}
-					type={type} />
-				{label}
-			</label>
+			<input
+				checked={values[id]}
+				className="checkbox"
+				disabled={isDisabled}
+				id={id}
+				onChange={handleChange}
+				required={isRequired}
+				type={type} />
 		)
 	}
 
@@ -175,14 +189,17 @@ function Field(props) {
 				field: true,
 				'radio-group': type === 'radio',
 			})}>
-			<label
-				className={classnames({
-					label: true,
-					'has-text-centered': isCentered,
-				})}
-				htmlFor={id}>
-				{label}
-			</label>
+
+			{showLabel && (
+				<label
+					className={classnames({
+						label: true,
+						'has-text-centered': isCentered,
+					})}
+					htmlFor={id}>
+					{label}
+				</label>
+			)}
 
 			<div
 				className={classnames({
@@ -257,6 +274,7 @@ Field.defaultProps = {
 	options: {},
 	validate: () => {},
 	shouldDebounceBy: 0,
+	showLabel: true,
 	type: 'text',
 }
 
@@ -275,6 +293,7 @@ Field.propTypes = {
 	onChange: PropTypes.func,
 	options: PropTypes.object,
 	shouldDebounceBy: PropTypes.number,
+	showLabel: PropTypes.bool,
 	type: PropTypes.string,
 	validate: PropTypes.func,
 }
