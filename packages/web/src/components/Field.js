@@ -79,12 +79,21 @@ function Field(props) {
 
 		if (type === 'checkbox') {
 			value = event.target.checked
+		} else if (type === 'number') {
+			// If the value contains a decimal, parse as a float. Otherwise, parse as
+			// an integer.
+			if (value.indexOf('.') !== -1) {
+				value = parseFloat(value)
+			} else {
+				value = parseInt(value)
+			}
 		}
 
 		updateValue(id, value)
 		validate(value, props)
 	}, [
 		id,
+		type,
 		updateValue,
 		validate,
 	])
