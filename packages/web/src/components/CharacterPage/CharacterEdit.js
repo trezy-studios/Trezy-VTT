@@ -102,117 +102,145 @@ function CharacterEdit(props) {
 
 	return (
 		<>
-			<h3 className="title">{'Ability Scores'}</h3>
+			<div className="columns is-multiline">
+				<Form
+				 	className="column is-half"
+					initialValues={{
+						dexterity: characterSheet.dexterity,
+						charisma: characterSheet.charisma,
+						constitution: characterSheet.constitution,
+						intelligence: characterSheet.intelligence,
+						strength: characterSheet.strength,
+						wisdom: characterSheet.wisdom,
+					}}
+					onSubmit={handleCharacterSheetSubmit}>
+					<div className="panel">
+						<h3 className="panel-heading">{'Ability Scores'}</h3>
 
-			<Form
-				initialValues={{
-					dexterity: characterSheet.dexterity,
-					charisma: characterSheet.charisma,
-					constitution: characterSheet.constitution,
-					intelligence: characterSheet.intelligence,
-					strength: characterSheet.strength,
-					wisdom: characterSheet.wisdom,
-				}}
-				onSubmit={handleCharacterSheetSubmit}>
-				<div className="columns is-multiline">
-					<div className="column is-2">
-						<Field
-							id="strength"
-							isCentered
-							isDisabled={isSaving}
-							isRequired
-							label="Strength"
-							type="number" />
+						<label className="panel-block">
+							<span>{'Strength'}</span>
+
+							<div className="panel-block-right">
+								<Field
+									id="strength"
+									isCentered
+									isDisabled={isSaving}
+									isRequired
+									label="Strength"
+									showLabel={false}
+									type="number" />
+							</div>
+						</label>
+
+						<label className="panel-block">
+							<span>{'Dexterity'}</span>
+
+							<div className="panel-block-right">
+								<Field
+									id="dexterity"
+									isCentered
+									isDisabled={isSaving}
+									isRequired
+									label="Dexterity"
+									showLabel={false}
+									type="number" />
+							</div>
+						</label>
+
+						<label className="panel-block">
+							<span>{'Constitution'}</span>
+
+							<div className="panel-block-right">
+								<Field
+									id="constitution"
+									isCentered
+									isDisabled={isSaving}
+									isRequired
+									label="Constitution"
+									showLabel={false}
+									type="number" />
+							</div>
+						</label>
+
+						<label className="panel-block">
+							<span>{'Intelligence'}</span>
+
+							<div className="panel-block-right">
+								<Field
+									id="intelligence"
+									isCentered
+									isDisabled={isSaving}
+									isRequired
+									label="Intelligence"
+									showLabel={false}
+									type="number" />
+							</div>
+						</label>
+
+						<label className="panel-block">
+							<span>{'Wisdom'}</span>
+
+							<div className="panel-block-right">
+								<Field
+									id="wisdom"
+									isCentered
+									isDisabled={isSaving}
+									isRequired
+									label="Wisdom"
+									showLabel={false}
+									type="number" />
+							</div>
+						</label>
+
+						<label className="panel-block">
+							<span>{'Charisma'}</span>
+
+							<div className="panel-block-right">
+								<Field
+									id="charisma"
+									isCentered
+									isDisabled={isSaving}
+									isRequired
+									label="Charisma"
+									showLabel={false}
+									type="number" />
+							</div>
+						</label>
+
+						<menu
+							className="panel-block"
+							type="toolbar">
+							<FormButton
+								className="is-fullwidth is-primary"
+								isDisabled={isSaving}
+								type="submit">
+								{'Save Ability Scores'}
+							</FormButton>
+						</menu>
 					</div>
+				</Form>
 
-					<div className="column is-2">
-						<Field
-							id="dexterity"
-							isCentered
-							isDisabled={isSaving}
-							isRequired
-							label="Dexterity"
-							type="number" />
+				<Form
+				 	className="column is-half"
+					initialValues={Object.keys(SKILLS).reduce(reduceSkillsToInitialValues, {})}
+					onSubmit={handleCharacterSheetSubmit}>
+					<div className="panel">
+						<h3 className="panel-heading">{'Skills'}</h3>
+
+						{Object.entries(SKILLS).map(mapSkill)}
+
+						<menu
+							className="panel-block"
+							type="toolbar">
+							<FormButton
+								className="is-fullwidth is-primary"
+								type="submit">
+								{'Save Skills'}
+							</FormButton>
+						</menu>
 					</div>
-
-					<div className="column is-2">
-						<Field
-							id="constitution"
-							isCentered
-							isDisabled={isSaving}
-							isRequired
-							label="Constitution"
-							type="number" />
-					</div>
-
-					<div className="column is-2">
-						<Field
-							id="intelligence"
-							isCentered
-							isDisabled={isSaving}
-							isRequired
-							label="Intelligence"
-							type="number" />
-					</div>
-
-					<div className="column is-2">
-						<Field
-							id="wisdom"
-							isCentered
-							isDisabled={isSaving}
-							isRequired
-							label="Wisdom"
-							type="number" />
-					</div>
-
-					<div className="column is-2">
-						<Field
-							id="charisma"
-							isCentered
-							isDisabled={isSaving}
-							isRequired
-							label="Charisma"
-							type="number" />
-					</div>
-				</div>
-
-				<menu type="toolbar">
-					<div className="menu-right">
-						<FormButton
-							className="is-primary"
-							isDisabled={isSaving}
-							type="submit">
-							{'Save Ability Scores'}
-						</FormButton>
-					</div>
-				</menu>
-			</Form>
-
-			<Form
-				initialValues={Object.keys(SKILLS).reduce(reduceSkillsToInitialValues, {})}
-				onSubmit={handleCharacterSheetSubmit}>
-				<div className="columns is-multiline">
-					<div className="column">
-						<div className="panel">
-							<h3 className="panel-heading">{'Skills'}</h3>
-
-							{Object.entries(SKILLS).map(mapSkill)}
-
-							<menu
-								className="panel-block"
-								type="toolbar">
-								<div className="menu-right">
-									<FormButton
-										className="is-primary"
-										type="submit">
-										{'Save Skills'}
-									</FormButton>
-								</div>
-							</menu>
-						</div>
-					</div>
-				</div>
-			</Form>
+				</Form>
+			</div>
 		</>
 	)
 }
