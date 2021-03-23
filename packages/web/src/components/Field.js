@@ -47,22 +47,24 @@ function Field(props) {
 	const validate = useCallback(debounce(async (state, initialProps) => {
 		const errors = []
 
-		if (
-			['number', 'string'].includes(typeof initialProps.maxLength) &&
-			(state.length > initialProps.maxLength)
-		) {
-			errors.push('Too long')
-		}
+		if (type !== 'checkbox') {
+			if (
+				['number', 'string'].includes(typeof initialProps.maxLength) &&
+				(state.length > initialProps.maxLength)
+			) {
+				errors.push('Too long')
+			}
 
-		if (
-			['number', 'string'].includes(typeof initialProps.minLength) &&
-			(state.length < initialProps.minLength)
-		) {
-			errors.push('Too short')
-		}
+			if (
+				['number', 'string'].includes(typeof initialProps.minLength) &&
+				(state.length < initialProps.minLength)
+			) {
+				errors.push('Too short')
+			}
 
-		if (initialProps.isRequired && !state) {
-			errors.push('Field is required')
+			if (initialProps.isRequired && !state) {
+				errors.push('Field is required')
+			}
 		}
 
 		if (typeof initialProps.validate === 'function') {
