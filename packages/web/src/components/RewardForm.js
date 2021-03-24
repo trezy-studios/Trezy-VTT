@@ -4,29 +4,37 @@ import {
 	useEffect,
     useState,
 } from 'react'
-import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import { useRouter } from 'next/router'
-import { ChromePicker } from 'react-color'
+
 
 // Local imports
 import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
-import { useModals } from 'contexts/ModalsContext'
+import API from 'helpers/API'
+
 
 
 function RewardForm(props) {
-	const { isModal } = props
-	const { closeModal } = useModals()
+	const { campaign, showModal } = props
 	const { user } = useAuth()
 	const Router = useRouter()
 
-    const redemptionOptions={
-        user: { label: 'Per User' },
-        stream: { label: 'Per Stream' },
-      }
+
+	  const createReward = useCallback(async (reward, campaign) => {
+        reward.uid = campaign.ownerID
+        reward.campaignID = campaign.id
+		console.log(reward)
+		console.log(campaign)
+		const response = await API.post({
+			body: reward,
+			route: '/rewards/new',
+		})
+		const responseJSON = await response.json()
+		return responseJSON.id
+	}, [])
 
 	const handleSubmit = useCallback(async formState => {
 		const {
@@ -36,9 +44,8 @@ function RewardForm(props) {
 
 		if (isValid) {
 			try {
-				console.log("Creating reward")
-				console.log(values)
-                closeModal('reward');
+				const newRewardID = await createReward(values, campaign)
+                showModal(false);
 			} catch(error) {
 				alert(`Unexpected error saving reward: ` + error)
 			}
@@ -111,6 +118,7 @@ RewardForm.defaultProps = {
 
 RewardForm.propTypes = {
 	isModal: PropTypes.bool,
+	campaign: PropTypes.object
 }
 
 export { RewardForm }
