@@ -104,9 +104,6 @@ const CampaignsContextProvider = props => {
 			},
 			route: '/rewards/new',
 		})
-		const responseJSON = await response.json()
-
-		return responseJSON.id
 	}, [])
 
 	const handleCampaignSnapshot = useCallback(snapshot => {
