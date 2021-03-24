@@ -1,5 +1,4 @@
 // Module imports
-import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 
@@ -8,6 +7,7 @@ import PropTypes from 'prop-types'
 
 
 // Local imports
+import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { useCharacters } from 'contexts/CharactersContext'
 
 
@@ -46,23 +46,50 @@ function CharacterSkills(props) {
 	const { characterSheet } = characters[characterID]
 
 	const mapSkill = useCallback(([skill, skillDisplayName]) => {
+		const hasExpertise = characterSheet.character[`${skill}:expert`]
+		const isProficient = characterSheet.character[`${skill}:proficient`]
+
 		return (
-			<tr key={skill}>
-				<th>{skillDisplayName}</th>
-				<td className="has-text-right">
-					{characterSheet[skill]}
-				</td>
-			</tr>
+			<div
+				className="panel-block"
+				key={skill}>
+				<span className="panel-icon">
+					<span className="fa-layers fa-fw">
+						<FontAwesomeIcon
+							fixedWidth
+							icon={['far', 'circle']} />
+
+						{isProficient && (
+							<FontAwesomeIcon
+								fixedWidth
+								icon={`check${hasExpertise ? '-double' : ''}`}
+								transform="shrink-6" />
+						)}
+					</span>
+				</span>
+
+				<span>{skillDisplayName}</span>
+
+				<div className="panel-block-right">
+					<button
+						className="button has-tooltip-arrow has-tooltip-left is-light is-primary is-small"
+						data-tooltip={characterSheet.skillScoreCalculationString(skill)}
+						style={{ width: '50px' }}>
+						{characterSheet[skill]}
+					</button>
+				</div>
+			</div>
 		)
 	}, [characterSheet])
 
 	return (
 		<details
-			className="card"
+			className="panel"
 			open>
-			<summary className="card-header">
-				<p className="card-header-title">{'Skills'}</p>
-				<span className="card-header-icon">
+			<summary className="panel-heading">
+				<span>{'Skills'}</span>
+
+				<span className="panel-heading-icon">
 					<span className="icon">
 						<FontAwesomeIcon
 							aria-hidden="true"
@@ -72,11 +99,7 @@ function CharacterSkills(props) {
 				</span>
 			</summary>
 
-			<table className="card-content is-fullwidth is-hoverable is-striped table">
-				<tbody>
-					{Object.entries(SKILLS).map(mapSkill)}
-				</tbody>
-			</table>
+			{Object.entries(SKILLS).map(mapSkill)}
 		</details>
 	)
 }

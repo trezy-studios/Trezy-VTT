@@ -181,17 +181,36 @@ const DEFAULTS = {
 
 
 export class CharacterSheet {
+	static skillBaseStats = {
+		acrobatics: 'dexterity',
+		animalHandling: 'wisdom',
+		arcana: 'intelligence',
+		athletics: 'strength',
+		deception: 'charisma',
+		history: 'intelligence',
+		insight: 'wisdom',
+		intimidation: 'charisma',
+		investigation: 'intelligence',
+		medicine: 'wisdom',
+		nature: 'intelligence',
+		perception: 'wisdom',
+		performance: 'charisma',
+		persuasion: 'charisma',
+		religion: 'intelligence',
+		sleightOfHand: 'dexterity',
+		stealth: 'dexterity',
+		survival: 'wisdom',
+	}
+
 	calculateAbilityModifier(abilityName) {
 		const abilityScore = this[abilityName]
 		return Math.floor((abilityScore - 10) / 2)
 	}
 
-	calculateSkillScore(skillName, baseStat) {
-		const hasExpertiseFlagName = `${skillName}:expert`
-		const hasExpertise = this.character[hasExpertiseFlagName]
-
-		const isProficientFlagName = `${skillName}:proficient`
-		const isProficient = this.character[isProficientFlagName]
+	calculateSkillScore(skillName) {
+		const baseStat = CharacterSheet.skillBaseStats[skillName]
+		const hasExpertise = this.character[`${skillName}:expert`]
+		const isProficient = this.character[`${skillName}:proficient`]
 
 		let score = this[`${baseStat}Modifier`]
 
@@ -204,6 +223,27 @@ export class CharacterSheet {
 		}
 
 		return score
+	}
+
+	skillScoreCalculationString(skillName) {
+		const baseStat = CharacterSheet.skillBaseStats[skillName]
+		const hasExpertise = this.character[`${skillName}:expert`]
+		const isProficient = this.character[`${skillName}:proficient`]
+
+		const baseStatScore = this[`${baseStat}Modifier`]
+		const baseStatAbbreviation = baseStat.slice(0, 3)
+
+		let skillScoreCalculationString = `${baseStatScore} (${baseStat})`
+
+		if (isProficient) {
+			skillScoreCalculationString += ` + ${this.proficiencyBonus} (proficiency bonus)`
+
+			if (hasExpertise) {
+				skillScoreCalculationString += ` ⨉ 2 (expertise)`
+			}
+		}
+
+		return skillScoreCalculationString
 	}
 
 	constructor(character) {
@@ -256,22 +296,22 @@ export class CharacterSheet {
 	}
 
 	// SKILLS
-	get acrobatics() { return this.calculateSkillScore('acrobatics', 'dexterity') }
-	get animalHandling() { return this.calculateSkillScore('animalHandling', 'wisdom') }
-	get arcana() { return this.calculateSkillScore('arcana', 'intelligence') }
-	get athletics() { return this.calculateSkillScore('athletics', 'strength') }
-	get deception() { return this.calculateSkillScore('deception', 'charisma') }
-	get history() { return this.calculateSkillScore('history', 'intelligence') }
-	get insight() { return this.calculateSkillScore('insight', 'wisdom') }
-	get intimidation() { return this.calculateSkillScore('intimidation', 'charisma') }
-	get investigation() { return this.calculateSkillScore('investigation', 'intelligence') }
-	get medicine() { return this.calculateSkillScore('medicine', 'wisdom') }
-	get nature() { return this.calculateSkillScore('nature', 'intelligence') }
-	get perception() { return this.calculateSkillScore('perception', 'wisdom') }
-	get performance() { return this.calculateSkillScore('performance', 'charisma') }
-	get persuasion() { return this.calculateSkillScore('persuasion', 'charisma') }
-	get religion() { return this.calculateSkillScore('religion', 'intelligence') }
-	get sleightOfHand() { return this.calculateSkillScore('sleightOfHand', 'dexterity') }
-	get stealth() { return this.calculateSkillScore('stealth', 'dexterity') }
-	get survival() { return this.calculateSkillScore('survival', 'wisdom') }
+	get acrobatics() { return this.calculateSkillScore('acrobatics') }
+	get animalHandling() { return this.calculateSkillScore('animalHandling') }
+	get arcana() { return this.calculateSkillScore('arcana') }
+	get athletics() { return this.calculateSkillScore('athletics') }
+	get deception() { return this.calculateSkillScore('deception') }
+	get history() { return this.calculateSkillScore('history') }
+	get insight() { return this.calculateSkillScore('insight') }
+	get intimidation() { return this.calculateSkillScore('intimidation') }
+	get investigation() { return this.calculateSkillScore('investigation') }
+	get medicine() { return this.calculateSkillScore('medicine') }
+	get nature() { return this.calculateSkillScore('nature') }
+	get perception() { return this.calculateSkillScore('perception') }
+	get performance() { return this.calculateSkillScore('performance') }
+	get persuasion() { return this.calculateSkillScore('persuasion') }
+	get religion() { return this.calculateSkillScore('religion') }
+	get sleightOfHand() { return this.calculateSkillScore('sleightOfHand') }
+	get stealth() { return this.calculateSkillScore('stealth') }
+	get survival() { return this.calculateSkillScore('survival') }
 }

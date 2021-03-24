@@ -1,6 +1,14 @@
-.panel {}
+.panel-heading {
+	display: flex;
+}
 
-.panel-block-right {
+details:not([open]) > summary.panel-heading {
+	border-radius: $panel-radius;
+	display: flex;
+}
+
+.panel-block-right,
+.panel-heading-icon {
 	display: flex;
 	gap: $gap;
 	margin-left: auto;
