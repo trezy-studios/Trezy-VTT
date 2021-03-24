@@ -227,12 +227,22 @@ export default function CharacterDashboardPage() {
 
 			{isCharactersLoaded && (
 				<>
-					<h2 className="title">{character.name}</h2>
-					<p className="subtitle">
-						{'A '}
-						<a href={gameURL}>{gameTitle}</a>
-						{' Character'}
-					</p>
+					<div className="media">
+						<div className="media-left">
+							<figure className="image is-96x96">
+								<img src="/temp/whistle.token.png" alt={`Token for ${character.name}`} />
+							</figure>
+						</div>
+
+						<div className="media-content">
+							<h2 className="title">{character.name}</h2>
+							<p className="subtitle">
+								{'A '}
+								<a href={gameURL}>{gameTitle}</a>
+								{' Character'}
+							</p>
+						</div>
+					</div>
 
 					<hr />
 

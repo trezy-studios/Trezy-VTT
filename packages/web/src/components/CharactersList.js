@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 
 // Local imports
-import { JSONPreview } from 'components/JSONPreview'
+import { CharacterSummary } from 'components/CharacterSummary'
 import { useCharacters } from 'contexts/CharactersContext'
 
 
@@ -18,10 +18,9 @@ function mapCharacterItem([id, character]) {
 		<li
 			className="column is-full-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd"
 			key={id}>
-			<JSONPreview>{character}</JSONPreview>
-			<Link href={`/characters/${id}`}>
-				<a>Character Details</a>
-			</Link>
+			<CharacterSummary
+				id={id}
+				character={character} />
 		</li>
 	)
 }
