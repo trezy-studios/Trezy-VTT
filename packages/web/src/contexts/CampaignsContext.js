@@ -29,6 +29,7 @@ import API from 'helpers/API'
 // Constants
 const INITIAL_STATE = {
 	campaigns: null,
+	currentCampaignID: null,
 	isLoaded: false, // Indicates that the first load has occured
 }
 
@@ -47,9 +48,29 @@ function reducer(state, action) {
 	}
 
 	switch (type) {
+		case 'unwatch campaign':
+			newState.currentCampaignID = null
+			break
+
 		case 'update campaigns':
 			newState.isLoaded = true
 			newState.campaigns = generateStateFromSnapshotPatch(newState.campaigns, payload)
+			break
+
+		case 'update rewards':
+			const campaign = newState.campaigns[newState.currentCampaignID]
+
+			newState.campaigns = {
+				...newState.campaigns,
+				[newState.currentCampaignID]: {
+					...campaign,
+					rewards: generateStateFromSnapshotPatch(campaign.rewards || {}, payload),
+				}
+			}
+			break
+
+		case 'watch campaign':
+			newState.currentCampaignID = payload
 			break
 
 		default:
@@ -68,6 +89,8 @@ const CampaignsContext = createContext({
 	...INITIAL_STATE,
 	createCampaign: () => {},
 	createReward: () => {},
+	unwatchCampaign: () => {},
+	watchCampaign: () => {},
 })
 
 const CampaignsContextProvider = props => {
@@ -117,6 +140,26 @@ const CampaignsContextProvider = props => {
 		}
 	}, [dispatch])
 
+	const handleRewardsSnapshot = useCallback(snapshot => {
+		const patch = generatePatchFromSnapshot(snapshot)
+
+		if (patch.length) {
+			dispatch({
+				payload: patch,
+				type: 'update rewards',
+			})
+		}
+	}, [])
+
+	const watchCampaign = useCallback(campaignID => {
+		dispatch({
+			payload: campaignID,
+			type: 'watch campaign',
+		})
+	}, [dispatch])
+
+	const unwatchCampaign = useCallback(() => dispatch({ type: 'unwatch campaign' }), [dispatch])
+
 	useEffect(() => {
 		if (isAuthLoaded && isLoggedIn && currentUser) {
 			const unsubscribers = []
@@ -142,12 +185,27 @@ const CampaignsContextProvider = props => {
 		isLoggedIn,
 	])
 
+	useEffect(() => {
+		if (state.currentCampaignID) {
+			return firestore
+				.collection('campaigns')
+				.doc(state.currentCampaignID)
+				.collection('rewards')
+				.onSnapshot(handleRewardsSnapshot)
+		}
+	}, [
+		state.currentCampaignID,
+		handleRewardsSnapshot,
+	])
+
 	return (
 		<CampaignsContext.Provider
 			value={{
 				...state,
 				createCampaign,
 				createReward,
+				unwatchCampaign,
+				watchCampaign,
 			}}>
 			{children}
 		</CampaignsContext.Provider>

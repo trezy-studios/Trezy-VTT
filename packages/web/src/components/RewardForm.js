@@ -37,7 +37,7 @@ function RewardForm(props) {
 
 		if (isValid) {
 			try {
-				const newRewardID = await createReward(values, campaign.id)
+				await createReward(values, campaign.id)
 				showModal(false)
 			} catch(error) {
 				alert(`Unexpected error saving reward: ` + error)
@@ -80,7 +80,7 @@ function RewardForm(props) {
 				id="isMaxRedemptionsPerUser"
 				type="checkbox"
 				title="Check if max redemptions are per user"
-				label=" Per User" />
+				label="Per User" />
 
 			<Field
 				id="cooldown"

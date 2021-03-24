@@ -1,16 +1,49 @@
-//import 3rd party
-import {useCallback, useState} from 'react'
+// Module imports
+import {
+	useCallback,
+	useEffect,
+	useState,
+} from 'react'
 
-//import local
-import { useModals } from 'contexts/ModalsContext'
+
+
+
+
+// Local imports
 import { Button } from 'components/Button'
-import {RewardModal} from 'components/RewardModal'
+import { JSONPreview } from 'components/JSONPreview'
+import { RewardModal } from 'components/RewardModal'
+import { useCampaigns } from 'contexts/CampaignsContext'
+import { useModals } from 'contexts/ModalsContext'
+
+
+
+
 
 export function CampaignRewards(props) {
-	const { campaign } = props
+	const {
+		campaigns,
+		unwatchCampaign,
+		watchCampaign,
+	} = useCampaigns()
+	const campaignID = props.campaign.id
+	const campaign = campaigns[campaignID]
 	const { openModal } = useModals()
 	const [shouldShowRewardsModal, setShouldShowRewardsModal] = useState(false)
 	const handleCreateRewardClick = () => setShouldShowRewardsModal(true)
+
+	const mapReward = useCallback(([rewardID, reward]) => {
+		return (
+			<li key={rewardID}>
+				<JSONPreview>{reward}</JSONPreview>
+			</li>
+		)
+	}, [])
+
+	useEffect(() => {
+		watchCampaign(campaignID)
+		return unwatchCampaign
+	}, [])
 
 	return (
 		<>
@@ -29,7 +62,7 @@ export function CampaignRewards(props) {
 			)}
 
 			<ul>
-				<li>{'Show some Rewards here?'}</li>
+				{Object.entries(campaign.rewards || {}).map(mapReward)}
 			</ul>
 		</>
 	)
