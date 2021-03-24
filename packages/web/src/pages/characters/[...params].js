@@ -251,7 +251,7 @@ export default function CharacterDashboardPage() {
 						<div className="column is-one-quarter">
 							<ul className="card-list">
 								<li>
-									<CharacterSkills character={character} />
+									<CharacterSkills characterID={characterID} />
 								</li>
 							</ul>
 						</div>

@@ -7,6 +7,13 @@ import PropTypes from 'prop-types'
 
 
 
+// Local imports
+import { useCharacters } from 'contexts/CharactersContext'
+
+
+
+
+
 // Constants
 const SKILLS = {
 	acrobatics: 'Acrobatics',
@@ -34,7 +41,9 @@ const SKILLS = {
 
 
 function CharacterSkills(props) {
-	const { characterSheet } = props.character
+	const { characterID } = props
+	const { characters } = useCharacters()
+	const { characterSheet } = characters[characterID]
 
 	const mapSkill = useCallback(([skill, skillDisplayName]) => {
 		return (
@@ -73,7 +82,7 @@ function CharacterSkills(props) {
 }
 
 CharacterSkills.propTypes = {
-	character: PropTypes.object.isRequired,
+	characterID: PropTypes.string.isRequired,
 }
 
 export { CharacterSkills }
