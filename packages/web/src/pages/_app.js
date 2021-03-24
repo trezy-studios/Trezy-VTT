@@ -10,6 +10,7 @@ import 'scss/app.scss'
 import { AuthContextProvider } from 'contexts/AuthContext'
 import { Banner } from 'components/Banner'
 import { CampaignsContextProvider } from 'contexts/CampaignsContext'
+import { CharactersContextProvider } from 'contexts/CharactersContext'
 import { ModalsContextProvider } from 'contexts/ModalsContext'
 import { reportWebVitals } from 'helpers/reportWebVitals'
 import { useFontawesome } from 'hooks/useFontawesome'
@@ -30,18 +31,20 @@ export default function App(props) {
 
 	return (
 		<AuthContextProvider>
-			<CampaignsContextProvider>
-				<ModalsContextProvider>
-					<div
-						className="container"
-						id="application-wrapper">
-						<Banner />
-						<Component {...pageProps} />
-					</div>
+			<CharactersContextProvider>
+				<CampaignsContextProvider>
+					<ModalsContextProvider>
+						<div
+							className="container"
+							id="application-wrapper">
+							<Banner />
+							<Component {...pageProps} />
+						</div>
 
-					<div id="modal-container" />
-				</ModalsContextProvider>
-			</CampaignsContextProvider>
+						<div id="modal-container" />
+					</ModalsContextProvider>
+				</CampaignsContextProvider>
+			</CharactersContextProvider>
 		</AuthContextProvider>
 	)
 }

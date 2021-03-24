@@ -13,6 +13,7 @@ import PropTypes from 'prop-types'
 
 // Local imports
 import { CampaignModal } from 'components/CampaignModal'
+import { CharacterModal } from 'components/CharacterModal'
 import { LoginModal } from 'components/LoginModal'
 import { RegistrationModal } from 'components/RegistrationModal'
 
@@ -98,6 +99,10 @@ const ModalsContextProvider = props => {
 
 			{state.modalStates.campaign && (
 				<CampaignModal />
+			)}
+
+			{state.modalStates.character && (
+				<CharacterModal />
 			)}
 
 			{state.modalStates.login && (
