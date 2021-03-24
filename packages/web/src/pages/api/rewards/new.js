@@ -18,25 +18,34 @@ export const handler = async (request, response) => {
 	try {
 		const user = await auth.verifyIdToken(firebaseAuthToken, true)
 
-		if (!reward.title || !reward.cost || reward.uid !== user.uid) {
-			response.status(httpStatus.UNPROCESSABLE_ENTITY).end()
+		if (!reward.title || !reward.cost) {
+			return response.status(httpStatus.UNPROCESSABLE_ENTITY).end()
 		}
-        
-		const rewardsCollection = firestore
-                                    .collection('campaigns')
-                                    .doc(reward.campaignID)
-                                    .collection('rewards')
 
-        delete reward.campaignID
-        delete reward.uid
-		reward.createdAt = firebase.firestore.FieldValue.serverTimestamp()
-	    reward.updatedAt = firebase.firestore.FieldValue.serverTimestamp()
+		const campaignRef = firestore.collection('campaigns').doc(reward.campaignID)
+		const campaignDoc = await campaignRef.get()
+		const campaign = campaignDoc.data()
 
-		const newReward = await rewardsCollection.add(reward)
+		if (campaign.ownerID !== user.uid) {
+			return response.status(httpStatus.FORBIDDEN).end()
+		}
 
-		response.status(httpStatus.PARTIAL_CONTENT).json({
-			id: newReward.id,
+		const removableFields = ['cooldown', 'maxRedemptions']
+
+		removableFields.forEach(key => {
+			if (reward[key] === 0) {
+				delete reward[key]
+			}
 		})
+
+		reward.createdAt = firebase.firestore.FieldValue.serverTimestamp()
+		reward.isSynced = true
+		reward.lastSync = firebase.firestore.FieldValue.serverTimestamp()
+		reward.updatedAt = firebase.firestore.FieldValue.serverTimestamp()
+
+		await campaignRef.collection('rewards').add(reward)
+
+		response.status(httpStatus.OK).end()
 	} catch (error) {
 		console.log(error)
 

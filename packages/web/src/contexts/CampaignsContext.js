@@ -67,6 +67,7 @@ function reducer(state, action) {
 const CampaignsContext = createContext({
 	...INITIAL_STATE,
 	createCampaign: () => {},
+	createReward: () => {},
 })
 
 const CampaignsContextProvider = props => {
@@ -89,6 +90,19 @@ const CampaignsContextProvider = props => {
 		const response = await API.post({
 			body: campaign,
 			route: '/campaigns/new',
+		})
+		const responseJSON = await response.json()
+
+		return responseJSON.id
+	}, [])
+
+	const createReward = useCallback(async (reward, campaignID) => {
+		const response = await API.post({
+			body: {
+				...reward,
+				campaignID,
+			},
+			route: '/rewards/new',
 		})
 		const responseJSON = await response.json()
 
@@ -136,6 +150,7 @@ const CampaignsContextProvider = props => {
 			value={{
 				...state,
 				createCampaign,
+				createReward,
 			}}>
 			{children}
 		</CampaignsContext.Provider>

@@ -8,31 +8,26 @@ import PropTypes from 'prop-types'
 import { useRouter } from 'next/router'
 
 
+
+
+
 // Local imports
 import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
+import { useCampaigns } from 'contexts/CampaignsContext'
 import API from 'helpers/API'
+
+
 
 
 
 function RewardForm(props) {
 	const { campaign, showModal } = props
 	const { user } = useAuth()
+	const { createReward } = useCampaigns()
 	const Router = useRouter()
-
-
-	  const createReward = useCallback(async (reward, campaign) => {
-        reward.uid = campaign.ownerID
-        reward.campaignID = campaign.id
-		const response = await API.post({
-			body: reward,
-			route: '/rewards/new',
-		})
-		const responseJSON = await response.json()
-		return responseJSON.id
-	}, [])
 
 	const handleSubmit = useCallback(async formState => {
 		const {
@@ -42,21 +37,22 @@ function RewardForm(props) {
 
 		if (isValid) {
 			try {
-				const newRewardID = await createReward(values, campaign)
-                showModal(false);
+				const newRewardID = await createReward(values, campaign.id)
+				showModal(false)
 			} catch(error) {
 				alert(`Unexpected error saving reward: ` + error)
 			}
 		}
 	}, [])
+
 	return (
 		<Form
 			initialValues={{
 				title: '',
-				cost: '',
-                maxRedemptions: '',
-				perUser: false,
-                cooldown: '',
+				cost: 100,
+				isMaxRedemptionsPerUser: false,
+				maxRedemptions: 0,
+				cooldown: 0,
 				color: '',
 			}}
 			onSubmit={handleSubmit}>
@@ -65,38 +61,39 @@ function RewardForm(props) {
 				isRequired
 				label="Name"
 				type="text"
-				maxLength={25}
-                title="Enter a name for Twitch reward" />
+				title="Enter a name for Twitch reward" />
 
 			<Field
 				id="cost"
-                isRequired
+				isRequired
 				label="Cost"
 				type="number"
-                title="Enter channel points cost of reward"/>
-            <div className="redemptionFields">
-             <Field
-                id="maxRedemptions"
-                label="Max Redemptions Per Stream"
-                type="number"
-                title="Enter maximum number of redemptions per stream for reward"/>
+				title="Enter channel points cost of reward"/>
+
 			<Field
-				id="perUser"
+				id="maxRedemptions"
+				label="Max Redemptions Per Stream"
+				type="number"
+				title="Enter maximum number of redemptions per stream for reward" />
+
+			<Field
+				id="isMaxRedemptionsPerUser"
 				type="checkbox"
 				title="Check if max redemptions are per user"
-				label=" Per User"/>
-            </div>
-            <Field
-                id="cooldown"
-                label="Cooldown"
-                type="number"
-                title="Enter reward cooldown in seconds"/>
+				label=" Per User" />
+
+			<Field
+				id="cooldown"
+				label="Cooldown"
+				type="number"
+				title="Enter reward cooldown in seconds" />
+
 			<Field
 				id="color"
 				label="Color"
 				type="chromepicker"
-				title="Select a reward color"
-			/>
+				title="Select a reward color" />
+
 			<menu type="toolbar">
 				<div className="menu-right">
 					<FormButton
