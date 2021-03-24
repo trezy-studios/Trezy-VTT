@@ -7,18 +7,19 @@ import PropTypes from 'prop-types'
 
 // Local imports
 import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
+import { useCharacters } from 'contexts/CharactersContext'
 
 
 
 
 
 function CharacterStats(props) {
-	const { characterSheet } = props.character
+	const { characterID } = props
+	const { characters } = useCharacters()
+	const { characterSheet } = characters[characterID]
 
 	return (
 		<>
-			<h3 className="title">Stats</h3>
-
 			<div className="level">
 				<div className="level-item has-text-centered">
 					<div>
@@ -73,7 +74,7 @@ function CharacterStats(props) {
 }
 
 CharacterStats.propTypes = {
-	character: PropTypes.object.isRequired,
+	characterID: PropTypes.string.isRequired,
 }
 
 export { CharacterStats }

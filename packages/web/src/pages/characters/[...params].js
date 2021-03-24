@@ -306,7 +306,7 @@ export default function CharacterDashboardPage() {
 							</div>
 
 							{(activeTab === 'stats') && (
-								<CharacterStats character={character} />
+								<CharacterStats characterID={characterID} />
 							)}
 
 							{(activeTab === 'inventory') && (
