@@ -30,7 +30,17 @@ export const handler = async (request, response) => {
 			return response.status(httpStatus.FORBIDDEN).end()
 		}
 
+		const removableFields = ['cooldown', 'maxRedemptions']
+
+		removableFields.forEach(key => {
+			if (reward[key] === 0) {
+				delete reward[key]
+			}
+		})
+
 		reward.createdAt = firebase.firestore.FieldValue.serverTimestamp()
+		reward.isSynced = true
+		reward.lastSync = firebase.firestore.FieldValue.serverTimestamp()
 		reward.updatedAt = firebase.firestore.FieldValue.serverTimestamp()
 
 		await campaignRef.collection('rewards').add(reward)

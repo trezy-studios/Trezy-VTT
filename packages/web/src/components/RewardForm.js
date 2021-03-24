@@ -50,8 +50,8 @@ function RewardForm(props) {
 			initialValues={{
 				title: '',
 				cost: 100,
+				isMaxRedemptionsPerUser: false,
 				maxRedemptions: 0,
-				perUser: false,
 				cooldown: 0,
 				color: '',
 			}}
@@ -77,7 +77,7 @@ function RewardForm(props) {
 				title="Enter maximum number of redemptions per stream for reward" />
 
 			<Field
-				id="perUser"
+				id="isMaxRedemptionsPerUser"
 				type="checkbox"
 				title="Check if max redemptions are per user"
 				label=" Per User" />
