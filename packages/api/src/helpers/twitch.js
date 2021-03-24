@@ -144,6 +144,10 @@ async function createReward(broadcaster_id, token, reward) {
 	return callHelixAPI('/channel_points/custom_rewards', token, "POST", {broadcaster_id}, reward);
 }
 
+async function deleteReward(broadcaster_id, reward_id, token) {
+	return callHelixAPI("/channel_points/custom_rewards", token, "DELETE", {broadcaster_id, id: reward_id});
+}
+
 export {
 	exchangeCodeForToken,
 	getUserInfoFromToken,
@@ -152,6 +156,7 @@ export {
 	getAllRewards,
 	getSingleRewardByIDAsArray,
 	createReward,
+	deleteReward,
 	InvalidAuthCodeError,
 	TwitchAPIError,
 	UnauthorizedError
