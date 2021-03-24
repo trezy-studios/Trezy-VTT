@@ -132,11 +132,26 @@ async function getTokenDetails(token) {
 	return await callOAuthAPI("/validate", token);
 }
 
+async function getAllRewards(broadcaster_id, token) {
+	return (await callHelixAPI('/channel_points/custom_rewards', token, "GET", {broadcaster_id, only_manageable_rewards: true})).data;
+}
+
+async function getSingleRewardByIDAsArray(broadcaster_id, reward_id, token) {
+	return (await callHelixAPI('/channel_points/custom_rewards', token, "GET", {broadcaster_id, only_manageable_rewards: true, id: reward_id})).data;
+}
+
+async function createReward(broadcaster_id, token, reward) {
+	return callHelixAPI('/channel_points/custom_rewards', token, "POST", {broadcaster_id}, reward);
+}
+
 export {
 	exchangeCodeForToken,
 	getUserInfoFromToken,
 	getTokenDetails,
 	exchangeRefreshTokenForToken,
+	getAllRewards,
+	getSingleRewardByIDAsArray,
+	createReward,
 	InvalidAuthCodeError,
 	TwitchAPIError,
 	UnauthorizedError

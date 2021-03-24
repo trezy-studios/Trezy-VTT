@@ -8,6 +8,7 @@ import {UnauthorizedError} from 'helpers/twitch';
 
 let first = true;
 let listeningCampaigns = {};
+let currentlyModifying = {};
 
 // Wrap it all in an `async` IIFE so we can simulate top-level `await`.
 (async () => {
@@ -23,8 +24,7 @@ let listeningCampaigns = {};
 		for (const change of changes) {
 			switch (change.type) {
 				case "added":
-				case "modified":
-				{
+				case "modified": {
 					let data = change.doc.data();
 					//console.log(change.type + ": " + JSON.stringify(data));
 					if (data.isActive) {
@@ -53,8 +53,7 @@ let listeningCampaigns = {};
 					}
 					break;
 				}
-				case "removed":
-				{
+				case "removed": {
 					if (change.doc.id in listeningCampaigns) {
 						listeningCampaigns[change.doc.id]();
 						delete listeningCampaigns[change.doc.id];
@@ -167,11 +166,80 @@ async function handleRewardsChanges(snapshot, campaign_doc) {
 	if (!twitch_info) {
 		throw new NoTwitchInforForRewardsError("Tried to process a rewards change without any Twitch Info available for the Owner of a campaign. Please make sure the Owner has valid twitch_info.")
 	}
-	let existing_twitch_rewards = [];
+
 	let doc_changes = snapshot.docChanges();
 	for (const doc_change of doc_changes) {
+		const current_id = doc_change.doc.id;
+		if (current_id in currentlyModifying) {
+			delete currentlyModifying[current_id];
+			continue;
+		}
 		let changed_doc_data = doc_change.doc.data();
-		// TODO: Check Twitch API and sync rewards
+		console.log({changed_doc_data});
+		console.log(doc_change.type);
+		switch (doc_change.type) {
+			case "added":
+			case "modified":
+				console.log("added/modified");
+				if (!changed_doc_data.twitch_id) {
+					// Must just add and save new data.
+				} else {
+					// check existing reward and see if we need to update it
+					let result;
+					try {
+						result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+					} catch (e) {
+						if (e instanceof twitch.UnauthorizedError) {
+							try {
+								await refreshUser(campaign_data.ownerID);
+							} catch (e) {
+								if (e instanceof twitch.TwitchAPIError) {
+									console.error("Error trying to refresh User after invalid authwas present (during Checking of existing Reward):");
+									console.error(e);
+									continue;
+								}
+							}
+							result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+						} else {
+							console.error("Unknown Error getting existing reward from Twitch API:");
+							console.error(e);
+							throw e;
+						}
+					}
+					if (result.length !== 1) {
+						// reward didn't exist, re-create it and update the local ID!
+						let result = await twitch.createReward(twitch_info.id, twitch_info.access_token, {
+							title: changed_doc_data.title,
+							prompt: "Redeem " + changed_doc_data.title + " for the Campaign " + campaign_data.name,
+							cost: changed_doc_data.cost,
+							is_enabled: false,
+							background_color: changed_doc_data.color,
+							is_global_cooldown_enabled: Boolean(parseInt(changed_doc_data.cooldown)),
+							global_cooldown_seconds: parseInt(changed_doc_data.cooldown) || 0,
+							is_max_per_stream_enabled: Boolean(parseInt(changed_doc_data.maxRedemptions)) && (!changed_doc_data.isMaxRedemptionsPerUser),
+							is_max_per_user_per_stream_enabled: Boolean(parseInt(changed_doc_data.maxRedemptions)) && changed_doc_data.isMaxRedemptionsPerUser,
+							max_per_user_per_stream: parseInt(changed_doc_data.maxRedemptions) || 0,
+							max_per_stream: parseInt(changed_doc_data.maxRedemptions) || 0
+						});
+						console.log({result});
+						// TODO: parse new ID and set in firestore and add to currentlyModifying
+					} else {
+						let existing_reward = result[0];
+						// TODO: Compare reward data with local copy. Update if necessary.
+					}
+				}
+				break;
+			case "removed":
+				console.log("removed");
+				if (!changed_doc_data.twitch_id) {
+					console.log("A non-twitch-synced reward was deleted. Ignoring, but this shouldn't really ever happen unless in an erroneus state.");
+					return;
+				}
+
+				break;
+			default:
+				console.log("UNKNOWN CHANGE TYPE");
+		}
 	}
 }
 
@@ -221,4 +289,9 @@ async function refreshUser(firebase_user_id) {
 	return createOrUpdateUserFromTokenDetailed(response.access_token, response.expires_in, response.scope, firebase_user_id);
 }
 
-export {createOrUpdateUserFromAuthCode, createOrUpdateUserFromOAuthToken, NoTokenAvailableError, NoTwitchInforForRewardsError};
+export {
+	createOrUpdateUserFromAuthCode,
+	createOrUpdateUserFromOAuthToken,
+	NoTokenAvailableError,
+	NoTwitchInforForRewardsError
+};
