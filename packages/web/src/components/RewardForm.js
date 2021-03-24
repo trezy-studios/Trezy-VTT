@@ -26,8 +26,6 @@ function RewardForm(props) {
 	  const createReward = useCallback(async (reward, campaign) => {
         reward.uid = campaign.ownerID
         reward.campaignID = campaign.id
-		console.log(reward)
-		console.log(campaign)
 		const response = await API.post({
 			body: reward,
 			route: '/rewards/new',
