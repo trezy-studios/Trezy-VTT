@@ -11,13 +11,25 @@ function Button(props) {
 		children,
 		className,
 		isDisabled,
+		isStyled,
 		onClick,
 		type,
 	} = props
 
+	const dataAttributes = Object.entries(props).reduce((accumulator, [key, value]) => {
+		if (key.startsWith('data-')) {
+			accumulator[key] = value
+		}
+		return accumulator
+	}, {})
+
 	return (
 		<button
-			className={classnames('button', className)}
+			{...dataAttributes}
+			className={classnames({
+				button: isStyled,
+				[className]: true,
+			})}
 			disabled={isDisabled}
 			onClick={onClick}
 			type={type}>
@@ -29,6 +41,7 @@ function Button(props) {
 Button.defaultProps = {
 	className: '',
 	isDisabled: false,
+	isStyled: true,
 	onClick: undefined,
 	type: 'button',
 }
@@ -37,6 +50,7 @@ Button.propTypes = {
 	children: PropTypes.node.isRequired,
 	className: PropTypes.string,
 	isDisabled: PropTypes.bool,
+	isStyled: PropTypes.bool,
 	onClick: PropTypes.func,
 	type: PropTypes.string.isRequired,
 }
