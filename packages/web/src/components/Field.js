@@ -139,18 +139,38 @@ function Field(props) {
 		const [color, setColor] = useState(values[id])
 		return (
 		<div className="field">
-		<label className="label">Color</label>
-		<div title={title}>
-			<ChromePicker 
-				color={color} 
-				onChange={(color) => 
-					{
-					setColor(color)
-					updateValue(id, color.hex)
-					validate(color.hex, props)
-					}}/>
+			<label className="label">Color</label>
+			<div title={title}>
+				<ChromePicker 
+					color={color} 
+					onChange={(color) => 
+						{
+						setColor(color)
+						updateValue(id, color.hex)
+						validate(color.hex, props)
+						}}/>
+			</div>
 		</div>
-		</div>
+		)
+	}
+
+	if(type === "checkbox"){
+		return (
+			<div className="field">
+				<label className="checkbox">
+					<input 
+						id={id}
+						type={type} 
+						onChange={(event) => {
+							updateValue(id, event.target.checked)
+							validate(event.target.checked, props)
+						}
+						} 
+						title={title}
+						checked={values[id]}/>
+					{label}
+				</label>
+			</div>
 		)
 	}
 

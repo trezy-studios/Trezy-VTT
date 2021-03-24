@@ -50,6 +50,7 @@ function RewardForm(props) {
 				title: '',
 				cost: '',
                 maxRedemptions: '',
+				perUser: false,
                 cooldown: '',
 				color: '',
 			}}
@@ -68,19 +69,17 @@ function RewardForm(props) {
 				label="Cost"
 				type="number"
                 title="Enter channel points cost of reward"/>
-            <div>
+            <div className="redemptionFields">
              <Field
                 id="maxRedemptions"
                 label="Max Redemptions Per Stream"
                 type="number"
                 title="Enter maximum number of redemptions per stream for reward"/>
-            <label class="checkbox">
-            <input
-                id="perUser"
-                type="checkbox"
-                title="Check if max redemptions are per user"/>
-                {" Per User"}
-            </label>
+			<Field
+				id="perUser"
+				type="checkbox"
+				title="Check if max redemptions are per user"
+				label=" Per User"/>
             </div>
             <Field
                 id="cooldown"
