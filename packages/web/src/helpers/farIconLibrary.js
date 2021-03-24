@@ -1,1 +1,1 @@
-export {} from '@fortawesome/free-regular-svg-icons'
+export { faCircle } from '@fortawesome/free-regular-svg-icons'

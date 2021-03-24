@@ -27,6 +27,7 @@ function Field(props) {
 		iconLeft,
 		id,
 		isDisabled,
+		isCentered,
 		isRequired,
 		onChange,
 		options,
@@ -34,6 +35,7 @@ function Field(props) {
 		maxLength,
 		minLength,
 		shouldDebounceBy,
+		showLabel,
 		type,
 		title,
 	} = props
@@ -47,22 +49,24 @@ function Field(props) {
 	const validate = useCallback(debounce(async (state, initialProps) => {
 		const errors = []
 
-		if (
-			['number', 'string'].includes(typeof initialProps.maxLength) &&
-			(state.length > initialProps.maxLength)
-		) {
-			errors.push('Too long')
-		}
+		if (type !== 'checkbox') {
+			if (
+				['number', 'string'].includes(typeof initialProps.maxLength) &&
+				(state.length > initialProps.maxLength)
+			) {
+				errors.push('Too long')
+			}
 
-		if (
-			['number', 'string'].includes(typeof initialProps.minLength) &&
-			(state.length < initialProps.minLength)
-		) {
-			errors.push('Too short')
-		}
+			if (
+				['number', 'string'].includes(typeof initialProps.minLength) &&
+				(state.length < initialProps.minLength)
+			) {
+				errors.push('Too short')
+			}
 
-		if (initialProps.isRequired && !state) {
-			errors.push('Field is required')
+			if (initialProps.isRequired && !state) {
+				errors.push('Field is required')
+			}
 		}
 
 		if (typeof initialProps.validate === 'function') {
@@ -76,10 +80,25 @@ function Field(props) {
 	}, shouldDebounceBy), [updateValidity])
 
 	const handleChange = useCallback(event => {
-		updateValue(id, event.target.value)
-		validate(event.target.value, props)
+		let value = event.target.value
+
+		if (type === 'checkbox') {
+			value = event.target.checked
+		} else if (type === 'number') {
+			// If the value contains a decimal, parse as a float. Otherwise, parse as
+			// an integer.
+			if (value.indexOf('.') !== -1) {
+				value = parseFloat(value)
+			} else {
+				value = parseInt(value)
+			}
+		}
+
+		updateValue(id, value)
+		validate(value, props)
 	}, [
 		id,
+		type,
 		updateValue,
 		validate,
 	])
@@ -119,11 +138,16 @@ function Field(props) {
 	])
 
 	useEffect(() => {
+		// Mark hidden and empty, non-required fields as valid
 		if (
-			(type === 'hidden') |
+			['hidden','checkbox'].includes(type) ||
 			(!isRequired && !values[id])
 		) {
 			updateValidity(id, [])
+
+		// Run a validity check against a field's initial state if it's non-empty
+		} else if (isRequired && (values[id] !== '')) {
+			validate(values[id], props)
 		}
 	}, [])
 
@@ -141,9 +165,9 @@ function Field(props) {
 		<div className="field">
 			<label className="label">Color</label>
 			<div title={title}>
-				<ChromePicker 
-					color={color} 
-					onChange={(color) => 
+				<ChromePicker
+					color={color}
+					onChange={(color) =>
 						{
 						setColor(color)
 						updateValue(id, color.hex)
@@ -154,24 +178,39 @@ function Field(props) {
 		)
 	}
 
-	if(type === "checkbox"){
-		return (
-			<div className="field">
+	if (type === "checkbox") {
+		if (showLabel) {
+			return (
 				<label className="checkbox">
-					<input 
+					<input
+						checked={values[id]}
+						className="checkbox"
+						disabled={isDisabled}
 						id={id}
-						type={type} 
-						onChange={(event) => {
-							updateValue(id, event.target.checked)
-							validate(event.target.checked, props)
-						}
-						} 
-						title={title}
-						checked={values[id]}/>
+						onChange={handleChange}
+						required={isRequired}
+						type={type} />
 					{label}
 				</label>
-			</div>
-		)
+			)
+
+			return (
+				<div className="field">
+					<label className="checkbox">
+						<input
+							checked={values[id]}
+							className="checkbox"
+							disabled={isDisabled}
+							id={id}
+							onChange={handleChange}
+							required={isRequired}
+							title={title}
+							type={type} />
+						{label}
+					</label>
+				</div>
+			)
+		}
 	}
 
 	return (
@@ -180,11 +219,17 @@ function Field(props) {
 				field: true,
 				'radio-group': type === 'radio',
 			})}>
-			<label
-				className="label"
-				htmlFor={id}>
-				{label}
-			</label>
+
+			{showLabel && (
+				<label
+					className={classnames({
+						label: true,
+						'has-text-centered': isCentered,
+					})}
+					htmlFor={id}>
+					{label}
+				</label>
+			)}
 
 			<div
 				className={classnames({
@@ -202,6 +247,7 @@ function Field(props) {
 					<input
 						autoComplete={autocomplete}
 						className={classnames({
+							'has-text-centered': isCentered,
 							input: true,
 							'is-danger': formErrors[id].length,
 						})}
@@ -259,6 +305,7 @@ Field.defaultProps = {
 	options: {},
 	validate: () => {},
 	shouldDebounceBy: 0,
+	showLabel: true,
 	type: 'text',
 	title: ''
 }
@@ -278,6 +325,7 @@ Field.propTypes = {
 	onChange: PropTypes.func,
 	options: PropTypes.object,
 	shouldDebounceBy: PropTypes.number,
+	showLabel: PropTypes.bool,
 	type: PropTypes.string,
 	validate: PropTypes.func,
 }

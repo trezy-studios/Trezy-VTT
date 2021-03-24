@@ -166,19 +166,24 @@ const AuthContextProvider = props => {
 	}, [])
 
 	const handleAuthStateChanged = useCallback(async user => {
-		const authToken = await user?.getIdToken()
-
-		if (authToken) {
-			Cookies.set('firebaseAuthToken', authToken)
-		} else {
-			Cookies.remove('firebaseAuthToken')
-		}
-
 		dispatch({
 			payload: user,
 			type: 'auth state changed',
 		})
 	}, [dispatch])
+
+	const handleIDTokenChange = useCallback(async user => {
+		if (user) {
+			const idToken = await user.getIdToken()
+
+			Cookies.set('firebaseAuthToken', idToken, {
+				maxAge: 60 * 60 * 24 * 30,
+				path: '/',
+			})
+		} else {
+			destroyCookie(null, 'firebaseAuthToken')
+		}
+	}, [])
 
 	const handleProfileSnapshot = useCallback(snapshot => {
 		dispatch({
@@ -232,6 +237,7 @@ const AuthContextProvider = props => {
 	}, [dispatch])
 
 	useEffect(() => auth.onAuthStateChanged(handleAuthStateChanged), [handleAuthStateChanged])
+	useEffect(() => auth.onIdTokenChanged(handleIDTokenChange), [handleIDTokenChange])
 
 	useEffect(() => {
 		const { uid } = state.user || {}

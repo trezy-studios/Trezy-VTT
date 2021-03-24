@@ -98,16 +98,34 @@ export function Banner() {
 				<div className="navbar-start">
 					<Link href="/">
 						<a className="navbar-item">
-							Home
+							{'Home'}
 						</a>
 					</Link>
 
 					{isLoggedIn && (
-						<Link href="/dashboard">
-							<a className="navbar-item">
-								Dashboard
-							</a>
-						</Link>
+						<div className="navbar-item has-dropdown is-hoverable">
+							<Link href="/dashboard">
+								<a className="navbar-link">
+									{'Dashboard'}
+								</a>
+							</Link>
+
+							<div className="navbar-dropdown">
+								<Link href="/campaigns">
+									<a className="navbar-item">
+										{'My Campaigns'}
+									</a>
+								</Link>
+
+								<Link href="/characters">
+									<a className="navbar-item">
+										{'My Characters'}
+									</a>
+								</Link>
+
+								{/* <hr className="navbar-divider" /> */}
+							</div>
+						</div>
 					)}
 				</div>
 
@@ -118,7 +136,7 @@ export function Banner() {
 								<Button
 									className="is-light"
 									onClick={logout}>
-									<strong>Logout</strong>
+									<strong>{'Logout'}</strong>
 								</Button>
 							)}
 
@@ -127,13 +145,13 @@ export function Banner() {
 									<Button
 										className="is-primary"
 										onClick={handleSignUpClick}>
-										<strong>Sign up</strong>
+										<strong>{'Sign up'}</strong>
 									</Button>
 
 									<Button
 										className="is-light"
 										onClick={handleLoginClick}>
-										<strong>Login</strong>
+										<strong>{'Login'}</strong>
 									</Button>
 								</>
 							)}
