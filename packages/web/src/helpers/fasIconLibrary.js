@@ -7,5 +7,6 @@ export {
 	faExclamationCircle,
 	faExclamationTriangle,
 	faLock,
+	faUpload,
 	faUser,
 } from '@fortawesome/free-solid-svg-icons'

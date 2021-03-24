@@ -8,6 +8,7 @@ import PropTypes from 'prop-types'
 
 // Local imports
 import { Field } from 'components/Field'
+import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useCharacters } from 'contexts/CharactersContext'
@@ -49,11 +50,17 @@ function CharacterEdit(props) {
 		isSavingCharacterSheets,
 		updateCharacterSheet,
 	} = useCharacters()
+	const character = characters[characterID]
 	const {
-		build: character,
+		build: characterBuild,
 		characterSheet,
-	} = characters[characterID]
+	} = character
 	const isSaving = isSavingCharacterSheets[characterID]
+
+	const handleCharacterSubmit = useCallback(formState => {
+		const { values } = formState
+		console.log(characterID, values)
+	}, [characterID])
 
 	const handleCharacterSheetSubmit = useCallback(formState => {
 		const { values } = formState
@@ -79,19 +86,19 @@ function CharacterEdit(props) {
 						isDisabled={isSaving}
 						label="Proficient"
 						type="checkbox"
-						value={character[isProficientFlagName]} />
+						value={characterBuild[isProficientFlagName]} />
 
 					<Field
 						id={hasExpertiseFlagName}
 						isDisabled={isSaving}
 						label="Expert"
 						type="checkbox"
-						value={character[hasExpertiseFlagName]} />
+						value={characterBuild[hasExpertiseFlagName]} />
 				</div>
 			</div>
 		)
 	}, [
-		character,
+		characterBuild,
 		isSaving,
 	])
 
@@ -99,14 +106,77 @@ function CharacterEdit(props) {
 		const isProficientFlagName = `${skill}:proficient`
 		const hasExpertiseFlagName = `${skill}:expert`
 
-		accumulator[isProficientFlagName] = character[isProficientFlagName]
-		accumulator[hasExpertiseFlagName] = character[hasExpertiseFlagName]
+		accumulator[isProficientFlagName] = characterBuild[isProficientFlagName]
+		accumulator[hasExpertiseFlagName] = characterBuild[hasExpertiseFlagName]
 
 		return accumulator
-	}, [character])
+	}, [characterBuild])
 
 	return (
 		<div className="columns is-multiline">
+			<Form
+				className="column is-full"
+				initialValues={{
+					'character-name': character.name,
+				}}
+				onSubmit={handleCharacterSubmit}>
+				<div className="panel">
+					<h3 className="panel-heading">{'Character Details'}</h3>
+
+					<label className="panel-block">
+						<span>{'Name'}</span>
+
+						<div className="panel-block-right">
+							<Field
+								id="character-name"
+								isDisabled={isSaving}
+								isRequired
+								label="Name"
+								showLabel={false} />
+						</div>
+					</label>
+
+					<label className="panel-block">
+						<span>Avatar</span>
+
+						<div className="panel-block-right">
+							<div className="file has-name is-right">
+								<span className="file-label">
+									<input className="file-input" type="file" name="resume" />
+
+									<span className="file-cta">
+										<span className="file-icon">
+											<FontAwesomeIcon
+												fixedWidth
+												icon="upload" />
+										</span>
+
+										<span className="file-label">
+											{'Choose a file…'}
+										</span>
+									</span>
+
+									<span className="file-name">
+										Screen Shot 2017-07-29 at 15.54.25.png
+									</span>
+								</span>
+							</div>
+						</div>
+					</label>
+
+					<menu
+						className="panel-block"
+						type="toolbar">
+						<FormButton
+							className="is-fullwidth is-primary"
+							isDisabled={isSaving}
+							type="submit">
+							{'Save Character Details'}
+						</FormButton>
+					</menu>
+				</div>
+			</Form>
+
 			<Form
 				className="column is-half"
 				initialValues={{
