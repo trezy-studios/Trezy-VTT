@@ -22,10 +22,35 @@ async function exchangeCodeForToken(code) {
 				grant_type: "authorization_code"
 			}
 		}).json();
-		console.log({result});
+		//console.log({result});
 		return result;
 	} catch (e) {
 		console.error("Error exchanging code for token:")
+		console.error(e);
+		const response = JSON.parse(e.response.body);
+		if (response.status === 400) {
+			throw new InvalidAuthCodeError(e);
+		}
+		return response;
+	}
+}
+
+async function exchangeRefreshTokenForToken(refresh_token) {
+	try {
+		let result = await got({
+			url: "https://id.twitch.tv/oauth2/token",
+			method: "POST",
+			searchParams: {
+				client_id: process.env.TWITCH_CLIENT_ID,
+				client_secret: process.env.TWITCH_CLIENT_SECRET,
+				refresh_token: refresh_token,
+				grant_type: "refresh_token"
+			}
+		}).json();
+		//console.log({result});
+		return result;
+	} catch (e) {
+		console.error("Error exchanging refresh token for token:")
 		console.error(e);
 		const response = JSON.parse(e.response.body);
 		if (response.status === 400) {
@@ -111,6 +136,7 @@ export {
 	exchangeCodeForToken,
 	getUserInfoFromToken,
 	getTokenDetails,
+	exchangeRefreshTokenForToken,
 	InvalidAuthCodeError,
 	TwitchAPIError,
 	UnauthorizedError

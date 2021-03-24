@@ -26,11 +26,20 @@ let listeningCampaigns = {};
 				case "modified":
 				{
 					let data = change.doc.data();
-					console.log(change.type + ": " + JSON.stringify(data));
+					//console.log(change.type + ": " + JSON.stringify(data));
 					if (data.isActive) {
 						if (!(change.doc.id in listeningCampaigns)) {
-							listeningCampaigns[change.doc.id] = change.doc.ref.collection("rewards").onSnapshot((snapshot) => {
-								console.log("An active campaign's rewards collection has been changed!");
+							listeningCampaigns[change.doc.id] = change.doc.ref.collection("rewards").onSnapshot(async (snapshot) => {
+								try {
+									await handleRewardsChanges(snapshot, change.doc.ref);
+								} catch (e) {
+									if (e instanceof NoTwitchInforForRewardsError) {
+										console.error("Tried to process rewards without Twitch Info. Ignoring.");
+									} else {
+										throw e;
+									}
+								}
+
 								//console.log(JSON.stringify(snapshot.docChanges()));
 							});
 							console.log("Added listener for " + change.doc.id)
@@ -57,11 +66,14 @@ let listeningCampaigns = {};
 					console.log("Unknown change type: " + change.type);
 			}
 		}
+		first = false;
 	});
 
 
 	const testingCode = "REDACTED";
 	const testingUserID = "REDACTED";
+	const testingUSerFirebaseID = "wUCzHxpZxORUYDpby3zSF6mUm1u2";
+	//await refreshUser(testingUSerFirebaseID);
 	try {
 		/*await createOrUpdateUserFromAuthCode(null,
 			{
@@ -71,7 +83,7 @@ let listeningCampaigns = {};
 				expires_in: 13178
 			});*/
 		//await createOrUpdateUserFromOAuthToken("REDACTED");
-		//await createOrUpdateUserFromAuthCode(testingCode)
+		//await createOrUpdateUserFromAuthCode(testingCode, testingUSerFirebaseID);
 	} catch (e) {
 		if (e instanceof UnauthorizedError) {
 			console.error("Was unauthorized...");
@@ -143,8 +155,27 @@ let listeningCampaigns = {};
 	console.log('Hello World')*/
 })();
 
+class NoTwitchInforForRewardsError extends Error {
+}
 
-async function createOrUpdateUserFromTokenDetailed(access_token, expires_in, scope, refresh_token = null, remove_refresh_token = false) {
+async function handleRewardsChanges(snapshot, campaign_doc) {
+	console.log("An active campaign's rewards collection has been changed!");
+	let campaign = await campaign_doc.get();
+	let campaign_data = await campaign.data();
+	let profile = await firestore.collection("profiles").doc(campaign_data.ownerID).get();
+	let twitch_info = (await profile.data()).twitch_info;
+	if (!twitch_info) {
+		throw new NoTwitchInforForRewardsError("Tried to process a rewards change without any Twitch Info available for the Owner of a campaign. Please make sure the Owner has valid twitch_info.")
+	}
+	let existing_twitch_rewards = [];
+	let doc_changes = snapshot.docChanges();
+	for (const doc_change of doc_changes) {
+		let changed_doc_data = doc_change.doc.data();
+		// TODO: Check Twitch API and sync rewards
+	}
+}
+
+async function createOrUpdateUserFromTokenDetailed(access_token, expires_in, scope, firebase_user_id, refresh_token = null, remove_refresh_token = false) {
 	const userInfo = await twitch.getUserInfoFromToken(access_token);
 	userInfo.access_token = access_token;
 	if (refresh_token !== null || remove_refresh_token) {
@@ -153,27 +184,41 @@ async function createOrUpdateUserFromTokenDetailed(access_token, expires_in, sco
 	userInfo.scopes = scope;
 	userInfo.created_at = firebase.firestore.Timestamp.fromMillis(Date.parse(userInfo.created_at));
 	userInfo.expires_at = firebase.firestore.Timestamp.fromMillis(Date.now() + (expires_in * 1000));
-	console.log({userInfo});
-	await firestore.collection("users").doc(userInfo.id).set(userInfo, {merge: true});
+	console.log("Refreshed user " + firebase_user_id);
+	return firestore.collection("profiles").doc(firebase_user_id).set({twitch_info: userInfo}, {merge: true});
+	//console.log("Result: " + JSON.stringify(result));
 }
 
-async function createOrUpdateUserFromAuthCode(code, overrideObj = null) { // override is used for testing. Expect it to not exist in prod.
+async function createOrUpdateUserFromAuthCode(code, firebase_user_id, overrideObj = null) { // override is used for testing. Expect it to not exist in prod.
 	let {
 		access_token,
 		refresh_token,
 		scope,
 		expires_in
 	} = overrideObj === null ? await twitch.exchangeCodeForToken(code) : overrideObj;
-	await createOrUpdateUserFromTokenDetailed(access_token, expires_in, scope, refresh_token);
+	await createOrUpdateUserFromTokenDetailed(access_token, expires_in, scope, firebase_user_id, refresh_token);
 }
 
-async function createOrUpdateUserFromOAuthToken(token) {
+async function createOrUpdateUserFromOAuthToken(token, firebase_user_id) {
 	let {scopes, expires_in} = await twitch.getTokenDetails(token);
-	await createOrUpdateUserFromTokenDetailed(token, expires_in, scopes);
+	await createOrUpdateUserFromTokenDetailed(token, expires_in, scopes, firebase_user_id);
 }
 
-async function refreshUser() {
-	// TODO: Implement
+class NoTokenAvailableError extends Error {
 }
 
-export {createOrUpdateUserFromAuthCode, createOrUpdateUserFromOAuthToken};
+async function refreshUser(firebase_user_id) {
+	let profile = await firestore.collection("profiles").doc(firebase_user_id).get();
+	let twitch_info = (await profile.data()).twitch_info;
+	//console.log({twitch_info});
+	if (!twitch_info) {
+		throw new NoTokenAvailableError("No Twitch Info available for selected User ID. Please let them set it first!");
+	}
+	if (!twitch_info.refresh_token) {
+		throw new NoTokenAvailableError("No refresh token available for selected User ID. Please set it first.");
+	}
+	let response = await twitch.exchangeRefreshTokenForToken(twitch_info.refresh_token);
+	return createOrUpdateUserFromTokenDetailed(response.access_token, response.expires_in, response.scope, firebase_user_id);
+}
+
+export {createOrUpdateUserFromAuthCode, createOrUpdateUserFromOAuthToken, NoTokenAvailableError, NoTwitchInforForRewardsError};
