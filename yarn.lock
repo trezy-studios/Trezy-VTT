@@ -1488,6 +1488,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@creativebulma/bulma-tooltip@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@creativebulma/bulma-tooltip@npm:1.2.0"
+  checksum: 962fc3f58675fa191113dccf117366d3aa42f7608e50f6d27ad0219448a9c977ec9a97de367830f5edf083dcbaa7b9060fd9436ed9fb6739be1ce7c419f407d7
+  languageName: node
+  linkType: hard
+
 "@discoveryjs/json-ext@npm:^0.5.0":
   version: 0.5.2
   resolution: "@discoveryjs/json-ext@npm:0.5.2"
@@ -18308,6 +18315,7 @@ typescript@3.9.3:
   version: 0.0.0-use.local
   resolution: "web@workspace:packages/web"
   dependencies:
+    "@creativebulma/bulma-tooltip": ^1.2.0
     "@fortawesome/fontawesome-svg-core": ^1.2.34
     "@fortawesome/free-brands-svg-icons": ^5.15.2
     "@fortawesome/free-regular-svg-icons": ^5.15.2

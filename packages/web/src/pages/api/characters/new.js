@@ -18,10 +18,13 @@ export const handler = async (request, response) => {
 	try {
 		const user = await auth.verifyIdToken(firebaseAuthToken, true)
 
-		if (!character.name) {
+		if (!character.name || !character.gameID) {
 			response.status(httpStatus.UNPROCESSABLE_ENTITY).end()
 		}
 
+		const { DEFAULT_BUILD } = await import(`data/${character.gameID}/character-sheet.js`)
+
+		character.build = DEFAULT_BUILD
 		character.ownerID = user.uid
 		character.createdAt = firebase.firestore.FieldValue.serverTimestamp()
 		character.updatedAt = firebase.firestore.FieldValue.serverTimestamp()

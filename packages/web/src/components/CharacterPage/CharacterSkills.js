@@ -1,5 +1,4 @@
 // Module imports
-import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { useCallback } from 'react'
 import PropTypes from 'prop-types'
 
@@ -8,35 +7,16 @@ import PropTypes from 'prop-types'
 
 
 // Local imports
-import { calculateAbilityModifier } from 'helpers/calculateAbilityModifier'
-import { JSONPreview } from 'components/JSONPreview'
+import { Button } from 'components/Button'
+import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
+import { useCharacters } from 'contexts/CharactersContext'
 
 
 
 
 
 // Constants
-const SKILL_ABILITY = {
-	acrobatics: 'dexterity',
-	animalHandling: 'wisdom',
-	arcana: 'intelligence',
-	athletics: 'strength',
-	deception: 'charisma',
-	history: 'intelligence',
-	insight: 'wisdom',
-	intimidation: 'charisma',
-	investigation: 'intelligence',
-	medicine: 'wisdom',
-	nature: 'intelligence',
-	perception: 'wisdom',
-	performance: 'charisma',
-	persuasion: 'charisma',
-	religion: 'intelligence',
-	sleightOfHand: 'dexterity',
-	stealth: 'dexterity',
-	survival: 'wisdom',
-}
-const SKILL_DISPLAY_NAME = {
+const SKILLS = {
 	acrobatics: 'Acrobatics',
 	animalHandling: 'Animal Handling',
 	arcana: 'Arcana',
@@ -62,57 +42,54 @@ const SKILL_DISPLAY_NAME = {
 
 
 function CharacterSkills(props) {
-	const {
-		proficiencyBonus,
-		skills,
-		stats,
-	} = props.character
+	const { characterID } = props
+	const { characters } = useCharacters()
+	const { characterSheet } = characters[characterID]
 
-	function calculateSkillValue(skill, details, proficiencyBonus) {
-		let value = calculateAbilityModifier(stats[SKILL_ABILITY[skill]])
-
-		if (details.proficient) {
-			value += proficiencyBonus
-		}
-
-		if (details.expert) {
-			value *= 2
-		}
-
-		return value
-	}
-
-	const mapSkill = useCallback(([skill, details]) => {
-		let skillScore = calculateAbilityModifier(stats[SKILL_ABILITY[skill]])
-
-		if (details.proficient) {
-			skillScore += proficiencyBonus
-		}
-
-		if (details.expert) {
-			skillScore *= 2
-		}
+	const mapSkill = useCallback(([skill, skillDisplayName]) => {
+		const hasExpertise = characterSheet.character[`${skill}:expert`]
+		const isProficient = characterSheet.character[`${skill}:proficient`]
 
 		return (
-			<tr>
-				<th>{SKILL_DISPLAY_NAME[skill]}</th>
-				<td className="has-text-right">
-					{skillScore}
-				</td>
-			</tr>
+			<div
+				className="panel-block"
+				key={skill}>
+				<span className="panel-icon">
+					<span className="fa-layers fa-fw">
+						<FontAwesomeIcon
+							fixedWidth
+							icon={['far', 'circle']} />
+
+						{isProficient && (
+							<FontAwesomeIcon
+								fixedWidth
+								icon={`check${hasExpertise ? '-double' : ''}`}
+								transform="shrink-6" />
+						)}
+					</span>
+				</span>
+
+				<span>{skillDisplayName}</span>
+
+				<div className="panel-block-right">
+					<Button
+						className="has-tooltip-arrow has-tooltip-left is-light is-primary is-small"
+						data-tooltip={characterSheet.skillScoreCalculationString(skill)}>
+						{characterSheet[skill]}
+					</Button>
+				</div>
+			</div>
 		)
-	}, [
-		stats,
-		proficiencyBonus,
-	])
+	}, [characterSheet])
 
 	return (
 		<details
-			className="card"
+			className="panel"
 			open>
-			<summary className="card-header">
-				<p className="card-header-title">{'Skills'}</p>
-				<span className="card-header-icon">
+			<summary className="panel-heading">
+				<span>{'Skills'}</span>
+
+				<span className="panel-heading-icon">
 					<span className="icon">
 						<FontAwesomeIcon
 							aria-hidden="true"
@@ -122,17 +99,13 @@ function CharacterSkills(props) {
 				</span>
 			</summary>
 
-			<table className="card-content is-fullwidth is-hoverable is-striped table">
-				<tbody>
-					{Object.entries(skills).map(mapSkill)}
-				</tbody>
-			</table>
+			{Object.entries(SKILLS).map(mapSkill)}
 		</details>
 	)
 }
 
-CharacterSkills.propTypes ={
-	character: PropTypes.object.isRequired,
+CharacterSkills.propTypes = {
+	characterID: PropTypes.string.isRequired,
 }
 
 export { CharacterSkills }

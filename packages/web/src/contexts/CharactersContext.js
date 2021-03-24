@@ -5,6 +5,7 @@ import {
 	useContext,
 	useEffect,
 	useReducer,
+	useRef,
 } from 'react'
 import PropTypes from 'prop-types'
 
@@ -30,6 +31,7 @@ import API from 'helpers/API'
 const INITIAL_STATE = {
 	characters: null,
 	isLoaded: false, // Indicates that the first load has occured
+	isSavingCharacterSheets: {},
 }
 
 
@@ -45,11 +47,32 @@ function reducer(state, action) {
 		...INITIAL_STATE,
 		...state,
 	}
+	let characterSheet = null
 
 	switch (type) {
+		case 'character sheet saved':
+			newState.isSavingCharacterSheets = { ...newState.isSavingCharacterSheets }
+			delete newState.isSavingCharacterSheets[payload]
+			break
+
+		case 'saving character sheet':
+			newState.isSavingCharacterSheets = {
+				...newState.isSavingCharacterSheets,
+				[payload]: true,
+			}
+			break
+
 		case 'update characters':
 			newState.isLoaded = true
-			newState.characters = generateStateFromSnapshotPatch(newState.characters, payload)
+			newState.characters = generateStateFromSnapshotPatch(newState.characters, payload.patch)
+			Object.values(newState.characters).forEach(character => {
+				const {
+					build,
+					gameID,
+				} = character
+				const CharacterSheet = payload.characterSheets[gameID]
+				character.characterSheet = new CharacterSheet(build)
+			})
 			break
 
 		default:
@@ -67,6 +90,7 @@ function reducer(state, action) {
 const CharactersContext = createContext({
 	...INITIAL_STATE,
 	createCharacter: () => {},
+	updateCharacterSheet: () => {},
 })
 
 const CharactersContextProvider = props => {
@@ -76,8 +100,8 @@ const CharactersContextProvider = props => {
 		isLoggedIn,
 		user: currentUser,
 	} = useAuth()
+	const characterSheets = useRef({})
 	const [state, dispatch] = useReducer(reducer, { ...INITIAL_STATE })
-
 
 	/**
 	 * Saves a new character to the firestore characters collection
@@ -96,12 +120,60 @@ const CharactersContextProvider = props => {
 		return responseJSON.id
 	}, [])
 
-	const handleCharacterSnapshot = useCallback(snapshot => {
+	const updateCharacterSheet = useCallback(async (characterID, characterSheetPatch) => {
+		dispatch({
+			payload: characterID,
+			type: 'saving character sheet',
+		})
+
+		const response = await API.put({
+			body: {
+				build: characterSheetPatch,
+			},
+			route: `/characters/${characterID}`,
+		})
+
+		dispatch({
+			payload: characterID,
+			type: 'character sheet saved',
+		})
+	}, [dispatch])
+
+	const handleCharacterSnapshot = useCallback(async snapshot => {
 		const patch = generatePatchFromSnapshot(snapshot)
+
+		// Retrieve CharacterSheets for any games that we haven't loaded yet
+		snapshot.docChanges().forEach(change => {
+			const {
+				doc,
+				type,
+			} = change
+
+			if (type !== 'added') {
+				return
+			}
+
+			const { gameID } = doc.data()
+
+			if (!characterSheets.current[gameID]) {
+				characterSheets.current[gameID] = (async () => {
+					const result = await import(`data/${gameID}/character-sheet`)
+					return result.CharacterSheet
+				})()
+			}
+		})
+
+		const characterSheetResults = await Promise.all(Object.values(characterSheets.current))
+		Object.keys(characterSheets.current).forEach((key, index) => {
+			characterSheets.current[key] = characterSheetResults[index]
+		})
 
 		if (patch.length) {
 			dispatch({
-				payload: patch,
+				payload: {
+					characterSheets: characterSheets.current,
+					patch,
+				},
 				type: 'update characters',
 			})
 		}
@@ -125,6 +197,7 @@ const CharactersContextProvider = props => {
 			value={{
 				...state,
 				createCharacter,
+				updateCharacterSheet,
 			}}>
 			{children}
 		</CharactersContext.Provider>
