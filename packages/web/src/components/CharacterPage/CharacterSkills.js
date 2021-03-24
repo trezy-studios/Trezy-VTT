@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 
 
 // Local imports
+import { Button } from 'components/Button'
 import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { useCharacters } from 'contexts/CharactersContext'
 
@@ -71,12 +72,11 @@ function CharacterSkills(props) {
 				<span>{skillDisplayName}</span>
 
 				<div className="panel-block-right">
-					<button
-						className="button has-tooltip-arrow has-tooltip-left is-light is-primary is-small"
-						data-tooltip={characterSheet.skillScoreCalculationString(skill)}
-						style={{ width: '50px' }}>
+					<Button
+						className="has-tooltip-arrow has-tooltip-left is-light is-primary is-small"
+						data-tooltip={characterSheet.skillScoreCalculationString(skill)}>
 						{characterSheet[skill]}
-					</button>
+					</Button>
 				</div>
 			</div>
 		)
