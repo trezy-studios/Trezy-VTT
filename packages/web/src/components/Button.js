@@ -16,8 +16,16 @@ function Button(props) {
 		type,
 	} = props
 
+	const dataAttributes = Object.entries(props).reduce((accumulator, [key, value]) => {
+		if (key.startsWith('data-')) {
+			accumulator[key] = value
+		}
+		return accumulator
+	}, {})
+
 	return (
 		<button
+			{...dataAttributes}
 			className={classnames({
 				button: isStyled,
 				[className]: true,
