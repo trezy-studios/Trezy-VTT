@@ -15,6 +15,7 @@ import { useRouter } from 'next/router'
 import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
+import { generateRandomHexColor } from 'helpers/generateRandomHexColor'
 import { useAuth } from 'contexts/AuthContext'
 import { useCampaigns } from 'contexts/CampaignsContext'
 import API from 'helpers/API'
@@ -24,7 +25,10 @@ import API from 'helpers/API'
 
 
 function RewardForm(props) {
-	const { campaign, showModal } = props
+	const {
+		campaign,
+		showModal,
+	} = props
 	const { user } = useAuth()
 	const { createReward } = useCampaigns()
 	const Router = useRouter()
@@ -53,7 +57,7 @@ function RewardForm(props) {
 				isMaxRedemptionsPerUser: false,
 				maxRedemptions: 0,
 				cooldown: 0,
-				color: '',
+				color: generateRandomHexColor(),
 			}}
 			onSubmit={handleSubmit}>
 			<Field
