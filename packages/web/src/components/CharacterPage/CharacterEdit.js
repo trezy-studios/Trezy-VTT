@@ -76,19 +76,24 @@ function CharacterEdit(props) {
 				<div className="panel-block-right">
 					<Field
 						id={isProficientFlagName}
+						isDisabled={isSaving}
 						label="Proficient"
 						type="checkbox"
 						value={character[isProficientFlagName]} />
 
 					<Field
 						id={hasExpertiseFlagName}
+						isDisabled={isSaving}
 						label="Expert"
 						type="checkbox"
 						value={character[hasExpertiseFlagName]} />
 				</div>
 			</div>
 		)
-	}, [character])
+	}, [
+		character,
+		isSaving,
+	])
 
 	const reduceSkillsToInitialValues = useCallback((accumulator, skill) => {
 		const isProficientFlagName = `${skill}:proficient`
