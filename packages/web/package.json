@@ -5,11 +5,22 @@
     "start": "next"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.34",
+    "@fortawesome/free-brands-svg-icons": "^5.15.2",
+    "@fortawesome/free-regular-svg-icons": "^5.15.2",
+    "@fortawesome/free-solid-svg-icons": "^5.15.2",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "bulma": "^0.9.2",
     "classnames": "^2.2.6",
     "firebase": "^8.2.9",
+    "firebase-admin": "^9.5.0",
+    "lodash": "^4.17.21",
+    "micro-cors": "^0.1.1",
     "next": "^10.0.7",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-markdown": "^5.0.3",
     "vtt": "workspace:*"
   },
   "devDependencies": {

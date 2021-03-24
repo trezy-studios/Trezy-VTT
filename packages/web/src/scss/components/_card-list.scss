@@ -1,0 +1,5 @@
+.card-list {
+	> li + li {
+		margin-top: $gap;
+	}
+}
