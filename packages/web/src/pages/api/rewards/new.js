@@ -39,11 +39,13 @@ export const handler = async (request, response) => {
 		})
 
 		reward.createdAt = firebase.firestore.FieldValue.serverTimestamp()
-		reward.isSynced = true
 		reward.lastSync = firebase.firestore.FieldValue.serverTimestamp()
 		reward.updatedAt = firebase.firestore.FieldValue.serverTimestamp()
 
-		await campaignRef.collection('rewards').add(reward)
+		await Promise.all([
+			campaignRef.update({ isSynced: false }),
+			campaignRef.collection('rewards').add(reward),
+		])
 
 		response.status(httpStatus.OK).end()
 	} catch (error) {
