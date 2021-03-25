@@ -44,7 +44,7 @@ export const handler = async (request, response) => {
 
 		await Promise.all([
 			campaignRef.update({ isSynced: false }),
-			campaignRef.collection('rewards').add(reward),
+			firestore.collection('rewards').add(reward),
 		])
 
 		response.status(httpStatus.OK).end()

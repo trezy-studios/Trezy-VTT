@@ -57,7 +57,7 @@ export function CampaignRewards(props) {
 
 			{shouldShowRewardsModal && (
 				<RewardModal
-					campaign={campaign}
+					campaign={{...campaign,id : campaignID}}
 					showModal={setShouldShowRewardsModal} />
 			)}
 
