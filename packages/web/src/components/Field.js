@@ -24,14 +24,15 @@ import { useForm } from 'components/Form'
 function Field(props) {
 	const {
 		autocomplete,
+		helperText,
 		iconLeft,
 		id,
 		isDisabled,
 		isCentered,
 		isRequired,
+		label,
 		onChange,
 		options,
-		label,
 		maxLength,
 		minLength,
 		shouldDebounceBy,
@@ -164,15 +165,15 @@ function Field(props) {
 		return (
 		<div className="field">
 			<label className="label">Color</label>
+
 			<div title={title}>
 				<ChromePicker
 					color={color}
-					onChange={(color) =>
-						{
+					onChange={color => {
 						setColor(color)
 						updateValue(id, color.hex)
 						validate(color.hex, props)
-						}}/>
+					}}/>
 			</div>
 		</div>
 		)
@@ -213,89 +214,110 @@ function Field(props) {
 		}
 	}
 
-	return (
+	let renderedHelpers = null
+	let renderedLabel = null
+
+	if (!formErrors[id].length && helperText) {
+		renderedHelpers = (
+			<p className="help">{helperText}</p>
+		)
+	} else if (Boolean(formErrors[id].length)) {
+		renderedHelpers = (
+			<ul>
+				{formErrors[id].map(error => (
+					<li
+						className="help is-danger"
+						key={error}>
+						{error}
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	if (showLabel) {
+		renderedLabel = (
+			<label
+				className={classnames({
+					label: true,
+					'has-text-centered': isCentered,
+				})}
+				htmlFor={id}>
+				{label}
+			</label>
+		)
+	}
+
+	let renderedControl = (
+		<div
+			className={classnames({
+				control: true,
+				'has-icons-left': iconLeft,
+				'has-icons-right': formErrors[id].length,
+			})}>
+			{(type === 'radio') && (
+				<ol className="radio-options">
+					{Object.entries(options).map(mapOption)}
+				</ol>
+			)}
+
+			{(type !== 'radio') && (
+				<input
+					autoComplete={autocomplete}
+					className={classnames({
+						'has-text-centered': isCentered,
+						input: true,
+						'is-danger': formErrors[id].length,
+					})}
+					disabled={isDisabled}
+					id={id}
+					maxLength={maxLength}
+					minLength={minLength}
+					onChange={handleChange}
+					required={isRequired}
+					type={type}
+					value={values[id]}
+					title={title} />
+			)}
+
+			{Boolean(iconLeft) && (
+				<span className="icon is-small is-left">
+					<FontAwesomeIcon
+						fixedWidth
+						icon={iconLeft} />
+				</span>
+			)}
+
+			{Boolean(formErrors[id].length) && (
+				<span className="icon is-small is-right">
+					<FontAwesomeIcon
+						fixedWidth
+						icon="exclamation-triangle" />
+				</span>
+			)}
+		</div>
+	)
+
+	let renderedField = (
 		<div
 			className={classnames({
 				field: true,
 				'radio-group': type === 'radio',
 			})}>
+			{renderedLabel}
 
-			{showLabel && (
-				<label
-					className={classnames({
-						label: true,
-						'has-text-centered': isCentered,
-					})}
-					htmlFor={id}>
-					{label}
-				</label>
-			)}
+			{renderedControl}
 
-			<div
-				className={classnames({
-					control: true,
-					'has-icons-left': iconLeft,
-					'has-icons-right': formErrors[id].length,
-				})}>
-				{(type === 'radio') && (
-					<ol className="radio-options">
-						{Object.entries(options).map(mapOption)}
-					</ol>
-				)}
-
-				{(type !== 'radio') && (
-					<input
-						autoComplete={autocomplete}
-						className={classnames({
-							'has-text-centered': isCentered,
-							input: true,
-							'is-danger': formErrors[id].length,
-						})}
-						disabled={isDisabled}
-						id={id}
-						maxLength={maxLength}
-						minLength={minLength}
-						onChange={handleChange}
-						required={isRequired}
-						type={type}
-						value={values[id]}
-						title={title} />
-				)}
-
-				{Boolean(iconLeft) && (
-					<span className="icon is-small is-left">
-						<FontAwesomeIcon
-							fixedWidth
-							icon={iconLeft} />
-					</span>
-				)}
-
-				{Boolean(formErrors[id].length) && (
-					<span className="icon is-small is-right">
-						<FontAwesomeIcon
-							fixedWidth
-							icon="exclamation-triangle" />
-					</span>
-				)}
-			</div>
-
-			{Boolean(formErrors[id].length) && (
-				<ul>
-					{formErrors[id].map(error => (
-						<li
-							className="help is-danger"
-							key={error}>
-							{error}
-						</li>
-					))}
-				</ul>
-			)}
+			{renderedHelpers}
 		</div>
 	)
+
+	return renderedField
 }
 
 Field.defaultProps = {
 	autocomplete: null,
+	helperText: '',
 	iconLeft: null,
 	isDisabled: false,
 	isRequired: false,
@@ -312,6 +334,7 @@ Field.defaultProps = {
 
 Field.propTypes = {
 	autocomplete: PropTypes.string,
+	helperText: PropTypes.string,
 	iconLeft: PropTypes.oneOfType([
 		PropTypes.array,
 		PropTypes.string,
