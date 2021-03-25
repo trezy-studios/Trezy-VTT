@@ -4,13 +4,19 @@ import { Modal } from 'components/Modal'
 
 
 export function RewardModal(props) {
-    const {campaign, showModal} = props;
+	const {
+		campaign,
+		showModal,
+	} = props
+
 	return (
 		<Modal
 			name="reward"
 			title="Create Reward"
-            showModal={showModal}>
-			<RewardForm campaign={campaign} showModal={showModal}/>
+			showModal={showModal}>
+			<RewardForm
+				campaignID={campaign.id}
+				showModal={showModal}/>
 		</Modal>
 	)
 }

@@ -13,6 +13,10 @@ import { useRouter } from 'next/router'
 
 // Local imports
 import { Field } from 'components/Field'
+import { FieldCheckbox } from 'components/FieldCheckbox'
+import { FieldColor } from 'components/FieldColor'
+import { FieldControl } from 'components/FieldControl'
+import { FieldRadioGroup } from 'components/FieldRadioGroup'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { generateRandomHexColor } from 'helpers/generateRandomHexColor'
@@ -26,7 +30,7 @@ import API from 'helpers/API'
 
 function RewardForm(props) {
 	const {
-		campaign,
+		campaignID,
 		showModal,
 	} = props
 	const { user } = useAuth()
@@ -41,7 +45,7 @@ function RewardForm(props) {
 
 		if (isValid) {
 			try {
-				await createReward(values, campaign.id)
+				await createReward(values, campaignID)
 				showModal(false)
 			} catch(error) {
 				alert(`Unexpected error saving reward: ` + error)
@@ -52,51 +56,70 @@ function RewardForm(props) {
 	return (
 		<Form
 			initialValues={{
-				title: '',
+				color: generateRandomHexColor(),
+				cooldown: 0,
 				cost: 100,
 				isMaxRedemptionsPerUser: false,
 				maxRedemptions: 0,
-				cooldown: 0,
-				color: generateRandomHexColor(),
+				optionzorz: '',
+				title: '',
 			}}
 			onSubmit={handleSubmit}>
 			<Field
 				id="title"
-				isRequired
-				label="Name"
-				type="text"
-				title="Enter a name for Twitch reward" />
+				label="Name">
+				<FieldControl
+					id="title"
+					isRequired
+					type="text" />
+			</Field>
 
 			<Field
+				helperText="How many channel points does it cost to redeem this reward?"
 				id="cost"
-				isRequired
-				label="Cost"
-				type="number"
-				title="Enter channel points cost of reward"/>
+				label="Cost">
+				<FieldControl
+					id="cost"
+					isRequired
+					min={1}
+					type="number" />
+			</Field>
 
 			<Field
+				helperText="Maximum number of times this reward can be redeemed per stream"
 				id="maxRedemptions"
-				label="Max Redemptions Per Stream"
-				type="number"
-				title="Enter maximum number of redemptions per stream for reward" />
+				label="Max Redemptions Per Stream">
+				<FieldControl
+					className="is-expanded"
+					id="maxRedemptions"
+					min={0}
+					type="number" />
+
+				<div className="control">
+					<label className="button">
+						<FieldCheckbox
+							id="isMaxRedemptionsPerUser"
+							label="Per user" />
+					</label>
+				</div>
+			</Field>
 
 			<Field
-				id="isMaxRedemptionsPerUser"
-				type="checkbox"
-				title="Check if max redemptions are per user"
-				label="Per User" />
-
-			<Field
+				helperText="Cooldown timer in seconds"
 				id="cooldown"
-				label="Cooldown"
-				type="number"
-				title="Enter reward cooldown in seconds" />
+				label="Cooldown">
+				<FieldControl
+					id="cooldown"
+					min={1}
+					type="number" />
+			</Field>
 
 			<Field
+				helperText="This is the color that will be used on Twitch"
 				id="color"
-				label="Color"
-				type="chromepicker"
-				title="Select a reward color" />
+				label="Color">
+				<FieldColor id="color" />
+			</Field>
 
 			<menu type="toolbar">
 				<div className="menu-right">
@@ -117,7 +140,7 @@ RewardForm.defaultProps = {
 
 RewardForm.propTypes = {
 	isModal: PropTypes.bool,
-	campaign: PropTypes.object
+	campaignID: PropTypes.string.isRequired,
 }
 
 export { RewardForm }
