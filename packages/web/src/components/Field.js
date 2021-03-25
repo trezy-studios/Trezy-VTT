@@ -1,5 +1,6 @@
 // Module imports
 import {
+	Children,
 	useCallback,
 	useEffect,
 	useState,
@@ -249,10 +250,25 @@ function Field(props) {
 		)
 	}
 
+	if (Children.count(children) > 1) {
+		return (
+			<div className={classnames('field', className)}>
+				{renderedLabel}
+
+				<div className="field has-addons">
+					{children}
+				</div>
+
+				{renderedHelpers}
+			</div>
+		)
+	}
+
 	return (
 		<div
 			className={classnames(className, {
 				field: true,
+				'has-addons': Children.count(children) > 1,
 				'radio-group': type === 'radio',
 			})}>
 			{renderedLabel}
