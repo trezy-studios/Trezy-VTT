@@ -72,13 +72,15 @@ function RewardForm(props) {
 				isRequired
 				label="Cost"
 				type="number"
-				title="Enter channel points cost of reward"/>
+				title="Enter channel points cost of reward"
+				minNumber={1}/>
 
 			<Field
 				id="maxRedemptions"
 				label="Max Redemptions Per Stream"
 				type="number"
-				title="Enter maximum number of redemptions per stream for reward" />
+				title="Enter maximum number of redemptions per stream for reward"
+				minNumber={0} />
 
 			<Field
 				id="isMaxRedemptionsPerUser"
@@ -90,7 +92,8 @@ function RewardForm(props) {
 				id="cooldown"
 				label="Cooldown"
 				type="number"
-				title="Enter reward cooldown in seconds" />
+				title="Enter reward cooldown in seconds"
+				minNumber={0} />
 
 			<Field
 				id="color"
