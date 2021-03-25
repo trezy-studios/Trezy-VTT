@@ -18,7 +18,7 @@ export const handler = async (request, response) => {
 	try {
 		const user = await auth.verifyIdToken(firebaseAuthToken, true)
 
-		if (!reward.title || !reward.cost) {
+		if (!reward.title || !reward.cost || reward.cost < 1 || reward.cooldown < 0 || reward.maxRedemptions < 0) {
 			return response.status(httpStatus.UNPROCESSABLE_ENTITY).end()
 		}
 
