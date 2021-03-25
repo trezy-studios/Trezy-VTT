@@ -24,6 +24,8 @@ import { useForm } from 'components/Form'
 function Field(props) {
 	const {
 		autocomplete,
+		children,
+		className,
 		helperText,
 		iconLeft,
 		id,
@@ -31,7 +33,6 @@ function Field(props) {
 		isCentered,
 		isRequired,
 		label,
-		onChange,
 		options,
 		maxLength,
 		minLength,
@@ -248,92 +249,92 @@ function Field(props) {
 		)
 	}
 
-	let renderedControl = (
+	return (
 		<div
-			className={classnames({
-				control: true,
-				'has-icons-left': iconLeft,
-				'has-icons-right': formErrors[id].length,
-			})}>
-			{(type === 'radio') && (
-				<ol className="radio-options">
-					{Object.entries(options).map(mapOption)}
-				</ol>
-			)}
-
-			{(type !== 'radio') && (
-				<input
-					autoComplete={autocomplete}
-					className={classnames({
-						'has-text-centered': isCentered,
-						input: true,
-						'is-danger': formErrors[id].length,
-					})}
-					disabled={isDisabled}
-					id={id}
-					maxLength={maxLength}
-					minLength={minLength}
-					onChange={handleChange}
-					required={isRequired}
-					type={type}
-					value={values[id]}
-					title={title} />
-			)}
-
-			{Boolean(iconLeft) && (
-				<span className="icon is-small is-left">
-					<FontAwesomeIcon
-						fixedWidth
-						icon={iconLeft} />
-				</span>
-			)}
-
-			{Boolean(formErrors[id].length) && (
-				<span className="icon is-small is-right">
-					<FontAwesomeIcon
-						fixedWidth
-						icon="exclamation-triangle" />
-				</span>
-			)}
-		</div>
-	)
-
-	let renderedField = (
-		<div
-			className={classnames({
+			className={classnames(className, {
 				field: true,
 				'radio-group': type === 'radio',
 			})}>
 			{renderedLabel}
 
-			{renderedControl}
+			{children || (
+				<div
+					className={classnames({
+						control: true,
+						'has-icons-left': iconLeft,
+						'has-icons-right': formErrors[id].length,
+					})}>
+					{(type === 'radio') && (
+						<ol className="radio-options">
+							{Object.entries(options).map(mapOption)}
+						</ol>
+					)}
+
+					{(type !== 'radio') && (
+						<input
+							autoComplete={autocomplete}
+							className={classnames({
+								'has-text-centered': isCentered,
+								input: true,
+								'is-danger': formErrors[id].length,
+							})}
+							disabled={isDisabled}
+							id={id}
+							maxLength={maxLength}
+							minLength={minLength}
+							onChange={handleChange}
+							required={isRequired}
+							type={type}
+							value={values[id]}
+							title={title} />
+					)}
+
+					{Boolean(iconLeft) && (
+						<span className="icon is-small is-left">
+							<FontAwesomeIcon
+								fixedWidth
+								icon={iconLeft} />
+						</span>
+					)}
+
+					{Boolean(formErrors[id].length) && (
+						<span className="icon is-small is-right">
+							<FontAwesomeIcon
+								fixedWidth
+								icon="exclamation-triangle" />
+						</span>
+					)}
+				</div>
+			)}
 
 			{renderedHelpers}
 		</div>
 	)
-
-	return renderedField
 }
 
 Field.defaultProps = {
 	autocomplete: null,
-	helperText: '',
+	children: null,
+	className: null,
+	helperText: null,
 	iconLeft: null,
 	isDisabled: false,
 	isRequired: false,
+	label: null,
 	maxLength: null,
 	minLength: null,
-	onChange: () => {},
 	options: {},
 	validate: () => {},
 	shouldDebounceBy: 0,
 	showLabel: true,
 	type: 'text',
-	title: ''
+	title: null,
 }
 
 Field.propTypes = {
 	autocomplete: PropTypes.string,
+	children: PropTypes.node,
+	className: PropTypes.string,
 	helperText: PropTypes.string,
 	iconLeft: PropTypes.oneOfType([
 		PropTypes.array,
@@ -342,13 +343,13 @@ Field.propTypes = {
 	id: PropTypes.string.isRequired,
 	isDisabled: PropTypes.bool,
 	isRequired: PropTypes.bool,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	maxLength: PropTypes.number,
 	minLength: PropTypes.number,
-	onChange: PropTypes.func,
 	options: PropTypes.object,
 	shouldDebounceBy: PropTypes.number,
 	showLabel: PropTypes.bool,
+	title: PropTypes.string,
 	type: PropTypes.string,
 	validate: PropTypes.func,
 }

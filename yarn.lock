@@ -17266,7 +17266,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"tinycolor2@npm:^1.4.1":
+"tinycolor2@npm:^1.4.1, tinycolor2@npm:^1.4.2":
   version: 1.4.2
   resolution: "tinycolor2@npm:1.4.2"
   checksum: cf33d084cb378d2988fad1b214e62f38be75ba1a9a6df98d4dadf77c31f82796d40822100e6d3e1973c9233ddf0ddbbbfdcac40e2288c958bca3c6d310e2ccb4
@@ -18335,6 +18335,7 @@ typescript@3.9.3:
     react-dom: ^17.0.1
     react-markdown: ^5.0.3
     sass: ^1.32.8
+    tinycolor2: ^1.4.2
     vercel: ^21.2.3
     vtt: "workspace:*"
   languageName: unknown
