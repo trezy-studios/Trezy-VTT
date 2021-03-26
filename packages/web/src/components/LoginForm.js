@@ -12,6 +12,7 @@ import PropTypes from 'prop-types'
 
 // Local imports
 import { Field } from 'components/Field'
+import { FieldControl } from 'components/FieldControl'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
@@ -59,20 +60,26 @@ function LoginForm(props) {
 			}}
 			onSubmit={handleSubmit}>
 			<Field
-				autocomplete="email"
-				iconLeft="envelope"
 				id="email"
-				isRequired
-				label="Email"
-				type="email" />
+				label="Email">
+				<FieldControl
+					autocomplete="email"
+					iconLeft="envelope"
+					id="email"
+					isRequired
+					type="email" />
+			</Field>
 
 			<Field
-				autocomplete="current-password"
-				iconLeft="lock"
 				id="password"
-				isRequired
-				label="Password"
-				type="password" />
+				label="Password">
+				<FieldControl
+					autocomplete="current-password"
+					iconLeft="lock"
+					id="password"
+					isRequired
+					type="password" />
+			</Field>
 
 			<menu type="toolbar">
 				<div className="menu-right">

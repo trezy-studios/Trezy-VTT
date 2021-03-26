@@ -8,6 +8,8 @@ import PropTypes from 'prop-types'
 
 // Local imports
 import { Field } from 'components/Field'
+import { FieldCheckbox } from 'components/FieldCheckbox'
+import { FieldControl } from 'components/FieldControl'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useCharacters } from 'contexts/CharactersContext'
@@ -74,19 +76,21 @@ function CharacterEdit(props) {
 				<span>{skillDisplayName}</span>
 
 				<div className="panel-block-right">
-					<Field
-						id={isProficientFlagName}
-						isDisabled={isSaving}
-						label="Proficient"
-						type="checkbox"
-						value={character[isProficientFlagName]} />
+					<Field id={isProficientFlagName}>
+						<FieldCheckbox
+							id={isProficientFlagName}
+							isDisabled={isSaving}
+							value={character[isProficientFlagName]}
+							label="Proficient" />
+					</Field>
 
-					<Field
-						id={hasExpertiseFlagName}
-						isDisabled={isSaving}
-						label="Expert"
-						type="checkbox"
-						value={character[hasExpertiseFlagName]} />
+					<Field id={hasExpertiseFlagName}>
+						<FieldCheckbox
+							id={hasExpertiseFlagName}
+							isDisabled={isSaving}
+							value={character[hasExpertiseFlagName]}
+							label="Expert" />
+					</Field>
 				</div>
 			</div>
 		)
@@ -127,12 +131,16 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="strength"
-								isCentered
-								isDisabled={isSaving}
 								isRequired
 								label="Strength"
-								showLabel={false}
-								type="number" />
+								showLabel={false}>
+								<FieldControl
+									alignment="center"
+									id="strength"
+									isDisabled={isSaving}
+									isRequired
+									type="number" />
+							</Field>
 						</div>
 					</label>
 
@@ -142,12 +150,16 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="dexterity"
-								isCentered
-								isDisabled={isSaving}
 								isRequired
 								label="Dexterity"
-								showLabel={false}
-								type="number" />
+								showLabel={false}>
+								<FieldControl
+									alignment="center"
+									id="dexterity"
+									isDisabled={isSaving}
+									isRequired
+									type="number" />
+							</Field>
 						</div>
 					</label>
 
@@ -157,12 +169,16 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="constitution"
-								isCentered
-								isDisabled={isSaving}
 								isRequired
 								label="Constitution"
-								showLabel={false}
-								type="number" />
+								showLabel={false}>
+								<FieldControl
+									alignment="center"
+									id="constitution"
+									isDisabled={isSaving}
+									isRequired
+									type="number" />
+							</Field>
 						</div>
 					</label>
 
@@ -172,12 +188,16 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="intelligence"
-								isCentered
-								isDisabled={isSaving}
 								isRequired
 								label="Intelligence"
-								showLabel={false}
-								type="number" />
+								showLabel={false}>
+								<FieldControl
+									alignment="center"
+									id="intelligence"
+									isDisabled={isSaving}
+									isRequired
+									type="number" />
+							</Field>
 						</div>
 					</label>
 
@@ -187,12 +207,16 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="wisdom"
-								isCentered
-								isDisabled={isSaving}
 								isRequired
 								label="Wisdom"
-								showLabel={false}
-								type="number" />
+								showLabel={false}>
+								<FieldControl
+									alignment="center"
+									id="wisdom"
+									isDisabled={isSaving}
+									isRequired
+									type="number" />
+							</Field>
 						</div>
 					</label>
 
@@ -202,12 +226,16 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="charisma"
-								isCentered
-								isDisabled={isSaving}
 								isRequired
 								label="Charisma"
-								showLabel={false}
-								type="number" />
+								showLabel={false}>
+								<FieldControl
+									alignment="center"
+									id="charisma"
+									isDisabled={isSaving}
+									isRequired
+									type="number" />
+							</Field>
 						</div>
 					</label>
 

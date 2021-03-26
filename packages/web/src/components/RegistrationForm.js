@@ -11,6 +11,7 @@ import PropTypes from 'prop-types'
 
 // Local imports
 import { Field } from 'components/Field'
+import { FieldControl } from 'components/FieldControl'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
@@ -81,33 +82,44 @@ function RegistrationForm(props) {
 			}}
 			onSubmit={handleSubmit}>
 			<Field
-				autocomplete="username"
-				iconLeft="user"
 				id="username"
 				isRequired
-				label="Username"
-				shouldDebounceBy={500}
-				type="username"
-				validate={handleValidateUsername} />
+				label="Username">
+				<FieldControl
+					autocomplete="username"
+					iconLeft="user"
+					id="username"
+					isRequired
+					shouldDebounceBy={500}
+					validate={handleValidateUsername} />
+			</Field>
 
 			<Field
-				autocomplete="email"
-				iconLeft="envelope"
 				id="email"
 				isRequired
-				label="Email"
-				shouldDebounceBy={500}
-				type="email"
-				validate={handleValidateEmail} />
+				label="Email">
+				<FieldControl
+					autocomplete="email"
+					iconLeft="envelope"
+					id="email"
+					isRequired
+					shouldDebounceBy={500}
+					type="email"
+					validate={handleValidateEmail} />
+			</Field>
 
 			<Field
-				autocomplete="new-password"
-				iconLeft="lock"
 				id="password"
 				isRequired
-				label="Password"
-				minLength={6}
-				type="password" />
+				label="Password">
+				<FieldControl
+					autocomplete="new-password"
+					iconLeft="lock"
+					id="password"
+					isRequired
+					minLength={6}
+					type="password" />
+			</Field>
 
 			<FormButton
 				className="is-primary"
