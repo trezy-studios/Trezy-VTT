@@ -21,8 +21,5 @@
 		"vercel:login": "yarn workspace web vercel login",
 		"vercel:link": "yarn workspace web vercel link",
 		"vercel:env:pull": "yarn workspace web vercel env pull"
-	},
-	"dependencies": {
-		"react-color": "^2.19.3"
 	}
 }

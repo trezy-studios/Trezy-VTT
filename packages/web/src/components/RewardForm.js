@@ -15,6 +15,7 @@ import { useRouter } from 'next/router'
 import { Field } from 'components/Field'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
+import { generateRandomHexColor } from 'helpers/generateRandomHexColor'
 import { useAuth } from 'contexts/AuthContext'
 import { useCampaigns } from 'contexts/CampaignsContext'
 import API from 'helpers/API'
@@ -24,7 +25,10 @@ import API from 'helpers/API'
 
 
 function RewardForm(props) {
-	const { campaign, showModal } = props
+	const {
+		campaign,
+		showModal,
+	} = props
 	const { user } = useAuth()
 	const { createReward } = useCampaigns()
 	const Router = useRouter()
@@ -53,7 +57,7 @@ function RewardForm(props) {
 				isMaxRedemptionsPerUser: false,
 				maxRedemptions: 0,
 				cooldown: 0,
-				color: '',
+				color: generateRandomHexColor(),
 			}}
 			onSubmit={handleSubmit}>
 			<Field
@@ -68,13 +72,15 @@ function RewardForm(props) {
 				isRequired
 				label="Cost"
 				type="number"
-				title="Enter channel points cost of reward"/>
+				title="Enter channel points cost of reward"
+				minNumber={1}/>
 
 			<Field
 				id="maxRedemptions"
 				label="Max Redemptions Per Stream"
 				type="number"
-				title="Enter maximum number of redemptions per stream for reward" />
+				title="Enter maximum number of redemptions per stream for reward"
+				minNumber={0} />
 
 			<Field
 				id="isMaxRedemptionsPerUser"
@@ -86,7 +92,8 @@ function RewardForm(props) {
 				id="cooldown"
 				label="Cooldown"
 				type="number"
-				title="Enter reward cooldown in seconds" />
+				title="Enter reward cooldown in seconds"
+				minNumber={0} />
 
 			<Field
 				id="color"

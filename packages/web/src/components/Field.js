@@ -64,6 +64,13 @@ function Field(props) {
 				errors.push('Too short')
 			}
 
+			if (
+				['number'].includes(typeof initialProps.minNumber) &&
+				(Number(state) < initialProps.minNumber)
+			){
+				errors.push('Too low')
+			}
+
 			if (initialProps.isRequired && !state) {
 				errors.push('Field is required')
 			}
@@ -301,6 +308,7 @@ Field.defaultProps = {
 	isRequired: false,
 	maxLength: null,
 	minLength: null,
+	minNumber: null,
 	onChange: () => {},
 	options: {},
 	validate: () => {},
@@ -322,6 +330,7 @@ Field.propTypes = {
 	label: PropTypes.string.isRequired,
 	maxLength: PropTypes.number,
 	minLength: PropTypes.number,
+	minNumber: PropTypes.number,
 	onChange: PropTypes.func,
 	options: PropTypes.object,
 	shouldDebounceBy: PropTypes.number,
