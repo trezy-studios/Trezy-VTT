@@ -10,6 +10,7 @@ import PropTypes from 'prop-types'
 import { Field } from 'components/Field'
 import { FieldCheckbox } from 'components/FieldCheckbox'
 import { FieldControl } from 'components/FieldControl'
+import { FieldFileUpload } from 'components/FieldFileUpload'
 import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
@@ -122,6 +123,7 @@ function CharacterEdit(props) {
 				className="column is-full"
 				initialValues={{
 					'character-name': character.name,
+					'token': null,
 				}}
 				onSubmit={handleCharacterSubmit}>
 				<div className="panel">
@@ -144,27 +146,7 @@ function CharacterEdit(props) {
 						<span>Avatar</span>
 
 						<div className="panel-block-right">
-							<div className="file has-name is-right">
-								<span className="file-label">
-									<input className="file-input" type="file" name="resume" />
-
-									<span className="file-cta">
-										<span className="file-icon">
-											<FontAwesomeIcon
-												fixedWidth
-												icon="upload" />
-										</span>
-
-										<span className="file-label">
-											{'Choose a file…'}
-										</span>
-									</span>
-
-									<span className="file-name">
-										Screen Shot 2017-07-29 at 15.54.25.png
-									</span>
-								</span>
-							</div>
+							<FieldFileUpload id="token" />
 						</div>
 					</label>
 
