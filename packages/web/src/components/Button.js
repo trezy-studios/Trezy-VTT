@@ -1,4 +1,5 @@
 // Module imports
+import { forwardRef } from 'react'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 
@@ -6,35 +7,46 @@ import PropTypes from 'prop-types'
 
 
 
-function Button(props) {
+const Button = forwardRef((props, ref) => {
 	const {
 		children,
 		className,
 		isDisabled,
 		isStyled,
 		onClick,
+		style,
 		type,
 	} = props
 
+	const dataAttributes = Object.entries(props).reduce((accumulator, [key, value]) => {
+		if (key.startsWith('data-')) {
+			accumulator[key] = value
+		}
+		return accumulator
+	}, {})
+
 	return (
 		<button
-			className={classnames({
+			{...dataAttributes}
+			className={classnames(className, {
 				button: isStyled,
-				[className]: true,
 			})}
 			disabled={isDisabled}
 			onClick={onClick}
+			ref={ref}
+			style={style}
 			type={type}>
 			{children}
 		</button>
 	)
-}
+})
 
 Button.defaultProps = {
-	className: '',
+	className: null,
 	isDisabled: false,
 	isStyled: true,
 	onClick: undefined,
+	style: {},
 	type: 'button',
 }
 
@@ -44,6 +56,7 @@ Button.propTypes = {
 	isDisabled: PropTypes.bool,
 	isStyled: PropTypes.bool,
 	onClick: PropTypes.func,
+	style: PropTypes.object,
 	type: PropTypes.string.isRequired,
 }
 

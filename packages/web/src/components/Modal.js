@@ -23,10 +23,16 @@ function Modal(props) {
 		children,
 		name,
 		title,
+		showModal
 	} = props
 	const { closeModal } = useModals()
 
-	const close = useCallback(() => closeModal(name), [
+	const close = useCallback(() => {
+								closeModal(name)
+								if (showModal){
+									showModal(false)
+								}}, 
+		[
 		closeModal,
 		name,
 	])

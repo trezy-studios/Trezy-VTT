@@ -160,7 +160,7 @@ const Form = props => {
 }
 
 Form.propTypes = {
-	className: '',
+	className: null,
 	initialValues: {},
 	onSubmit: () => {},
 }

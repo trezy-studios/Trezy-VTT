@@ -16,6 +16,7 @@ import { CampaignModal } from 'components/CampaignModal'
 import { CharacterModal } from 'components/CharacterModal'
 import { LoginModal } from 'components/LoginModal'
 import { RegistrationModal } from 'components/RegistrationModal'
+import { RewardModal } from 'components/RewardModal'
 
 
 
@@ -76,12 +77,13 @@ const ModalsContextProvider = props => {
 	const [state, dispatch] = useReducer(reducer, { ...INITIAL_STATE })
 
 	const closeModal = useCallback(modalName => {
+		console.log(modalName)
 		dispatch({
 			payload: modalName,
 			type: 'close modal',
 		})
 	}, [dispatch])
-	const openModal = useCallback(modalName => {
+	const openModal = useCallback((modalName) => {
 		dispatch({
 			payload: modalName,
 			type: 'open modal',
@@ -111,6 +113,10 @@ const ModalsContextProvider = props => {
 
 			{state.modalStates.registration && (
 				<RegistrationModal />
+			)}
+
+			{state.modalStates.reward && (
+				<RewardModal />
 			)}
 		</ModalsContext.Provider>
 	)
