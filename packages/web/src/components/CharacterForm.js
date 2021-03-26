@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 
 // Local imports
 import { Field } from 'components/Field'
+import { FieldControl } from 'components/FieldControl'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
@@ -57,9 +58,12 @@ function CharacterForm(props) {
 			<Field
 				id="name"
 				isRequired
-				label="Name"
-				type="text"
-				maxLength={100} />
+				label="Name">
+				<FieldControl
+					id="name"
+					isRequired
+					maxLength={100} />
+			</Field>
 
 			<Field
 				id="gameID"
