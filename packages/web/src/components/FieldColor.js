@@ -74,13 +74,11 @@ function FieldColor(props) {
 	])
 
 	useEffect(() => {
-		// Mark hidden and empty, non-required fields as valid
-		if (!isRequired && !values[id]) {
-			updateValidity(id, [])
-
 		// Run a validity check against a field's initial state if it's non-empty
-		} else if (isRequired && (values[id] !== '')) {
+		if (isRequired && (values[id] !== '')) {
 			validate(values[id], props)
+		} else {
+			updateValidity(id, [])
 		}
 	}, [])
 
