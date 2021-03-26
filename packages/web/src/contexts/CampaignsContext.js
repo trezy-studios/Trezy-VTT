@@ -188,9 +188,8 @@ const CampaignsContextProvider = props => {
 	useEffect(() => {
 		if (state.currentCampaignID) {
 			return firestore
-				.collection('campaigns')
-				.doc(state.currentCampaignID)
 				.collection('rewards')
+				.where('campaignID', '==', state.currentCampaignID)
 				.onSnapshot(handleRewardsSnapshot)
 		}
 	}, [
