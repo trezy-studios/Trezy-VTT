@@ -201,9 +201,7 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="strength"
-								isRequired
-								label="Strength"
-								showLabel={false}>
+								isRequired>
 								<FieldControl
 									alignment="center"
 									id="strength"
@@ -220,9 +218,7 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="dexterity"
-								isRequired
-								label="Dexterity"
-								showLabel={false}>
+								isRequired>
 								<FieldControl
 									alignment="center"
 									id="dexterity"
@@ -239,9 +235,7 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="constitution"
-								isRequired
-								label="Constitution"
-								showLabel={false}>
+								isRequired>
 								<FieldControl
 									alignment="center"
 									id="constitution"
@@ -258,9 +252,7 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="intelligence"
-								isRequired
-								label="Intelligence"
-								showLabel={false}>
+								isRequired>
 								<FieldControl
 									alignment="center"
 									id="intelligence"
@@ -277,9 +269,7 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="wisdom"
-								isRequired
-								label="Wisdom"
-								showLabel={false}>
+								isRequired>
 								<FieldControl
 									alignment="center"
 									id="wisdom"
@@ -296,9 +286,7 @@ function CharacterEdit(props) {
 						<div className="panel-block-right">
 							<Field
 								id="charisma"
-								isRequired
-								label="Charisma"
-								showLabel={false}>
+								isRequired>
 								<FieldControl
 									alignment="center"
 									id="charisma"

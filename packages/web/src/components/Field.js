@@ -46,13 +46,10 @@ function Field(props) {
 		)
 	}
 
-	if (showLabel) {
+	if (label) {
 		renderedLabel = (
 			<label
-				className={classnames({
-					label: true,
-					'has-text-centered': isCentered,
-				})}
+				className="label"
 				htmlFor={id}>
 				{label}
 				{isRequired && (
