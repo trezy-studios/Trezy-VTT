@@ -6,66 +6,40 @@ import {
 import * as twitch from 'helpers/twitch'
 import {UnauthorizedError} from 'helpers/twitch';
 
-let first = true;
-let listeningCampaigns = {};
 let currentlyModifying = {};
 
 // Wrap it all in an `async` IIFE so we can simulate top-level `await`.
 (async () => {
 	// Create a collection reference
 	const campaignsCollection = firestore.collection('campaigns');
-	campaignsCollection.onSnapshot((snapshot) => {
-		/*if (first) {
-			console.log("First snapshot, assuming initial state...");
-			first = false;
-			return;
-		}*/
-		const changes = snapshot.docChanges();
-		for (const change of changes) {
-			switch (change.type) {
-				case "added":
-				case "modified": {
-					let data = change.doc.data();
-					//console.log(change.type + ": " + JSON.stringify(data));
-					if (data.isActive) {
-						if (!(change.doc.id in listeningCampaigns)) {
-							listeningCampaigns[change.doc.id] = change.doc.ref.collection("rewards").onSnapshot(async (snapshot) => {
-								try {
-									await handleRewardsChanges(snapshot, change.doc.ref);
-								} catch (e) {
-									if (e instanceof NoTwitchInforForRewardsError) {
-										console.error("Tried to process rewards without Twitch Info. Ignoring.");
-									} else {
-										throw e;
-									}
-								}
-
-								//console.log(JSON.stringify(snapshot.docChanges()));
-							});
-							console.log("Added listener for " + change.doc.id)
-						}
-					} else {
-						if (change.doc.id in listeningCampaigns) {
-							listeningCampaigns[change.doc.id]();
-							delete listeningCampaigns[change.doc.id];
-							console.log("made inactive/removed: " + change.doc.id);
+	const rewardsCollection = firestore.collection('rewards');
+	rewardsCollection.onSnapshot(async (snapshot) => {
+		for (const change of snapshot.docChanges()) {
+			let data = change.doc.data();
+			if (data.campaignID) {
+				let campaignRef = campaignsCollection.doc(data.campaignID);
+				let campaignData = (await campaignRef.get()).data();
+				if (campaignData.isActive) {
+					try {
+						await handleRewardsChanges(change, campaignData);
+					} catch (e) {
+						if (e instanceof NoTwitchInforForRewardsError) {
+							console.error("Tried to process rewards without Twitch Info. Ignoring.");
+						} else {
+							console.error(e);
+							if (e.response) {
+								console.error(e.response.body);
+							}
+							throw e;
 						}
 					}
-					break;
+				} else {
+					console.log("Ignoring change of a Reward for an inactive Campaign.")
 				}
-				case "removed": {
-					if (change.doc.id in listeningCampaigns) {
-						listeningCampaigns[change.doc.id]();
-						delete listeningCampaigns[change.doc.id];
-					}
-					console.log("removed: " + change.doc.id);
-					break;
-				}
-				default:
-					console.log("Unknown change type: " + change.type);
+			} else {
+				console.error("Change for a Reward that didn't have an associated campaign. Ignoring.");
 			}
 		}
-		first = false;
 	});
 
 
@@ -157,17 +131,14 @@ let currentlyModifying = {};
 class NoTwitchInforForRewardsError extends Error {
 }
 
-async function handleRewardsChanges(snapshot, campaign_doc) {
+async function handleRewardsChanges(change, campaign_data) {
 	console.log("An active campaign's rewards collection has been changed!");
-	let campaign = await campaign_doc.get();
-	let campaign_data = await campaign.data();
+
 	let profile = await firestore.collection("profiles").doc(campaign_data.ownerID).get();
 	let twitch_info = (await profile.data()).twitch_info;
 	if (!twitch_info) {
 		throw new NoTwitchInforForRewardsError("Tried to process a rewards change without any Twitch Info available for the Owner of a campaign. Please make sure the Owner has valid twitch_info.")
 	}
-
-	let doc_changes = snapshot.docChanges();
 
 	async function createReward(changed_doc_data, firebase_id) {
 		// reward didn't exist, re-create it and update the local ID!
@@ -186,97 +157,100 @@ async function handleRewardsChanges(snapshot, campaign_doc) {
 		});
 		console.log(JSON.stringify(result));
 		currentlyModifying[firebase_id] = true;
-		campaign_doc.collection("rewards").doc(firebase_id).set({twitch_id: result.data[0].id}, {merge: true});
+		firestore.collection("rewards").doc(firebase_id).set({
+			twitch_id: result.data[0].id,
+			lastSynced: firebase.firestore.FieldValue.serverTimestamp()
+		}, {merge: true});
 	}
 
-	for (const doc_change of doc_changes) {
-		const current_id = doc_change.doc.id;
-		if (current_id in currentlyModifying) {
-			delete currentlyModifying[current_id];
-			continue;
-		}
-		let changed_doc_data = doc_change.doc.data();
-		console.log({changed_doc_data});
-		console.log(doc_change.type);
-		switch (doc_change.type) {
-			case "added":
-			case "modified":
-				console.log("added/modified");
-				if (!changed_doc_data.twitch_id) {
-					// Must just add and save new data.
-					await createReward(changed_doc_data, current_id);
-				} else {
-					// check existing reward and see if we need to update it
-					let result;
-					try {
-						result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
-					} catch (e) {
-						if (e instanceof twitch.UnauthorizedError) {
-							try {
-								await refreshUser(campaign_data.ownerID);
-							} catch (e) {
-								if (e instanceof twitch.TwitchAPIError) {
-									console.error("Error trying to refresh User after invalid authwas present (during Checking of existing Reward):");
-									console.error(e);
-									continue;
-								}
-							}
-							result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
-						} else {
-							console.error("Unknown Error getting existing reward from Twitch API:");
-							console.error(e);
-							throw e;
-						}
-					}
-					if (result.length !== 1) {
-						await createReward(changed_doc_data, current_id);
-					} else {
-						let existing_reward = result[0];
-						// TODO: Compare reward data with local copy. Update if necessary.
-						console.log("Need to check if this stuff differs from local copy: " + JSON.stringify(existing_reward));
-					}
-				}
-				break;
-			case "removed":
-				if (!changed_doc_data.twitch_id) {
-					console.log("A non-twitch-synced reward was deleted. Ignoring, but this shouldn't really ever happen unless in an erroneus state.");
-					return;
-				}
+
+	const current_id = change.doc.id;
+	if (current_id in currentlyModifying) {
+		delete currentlyModifying[current_id];
+		return;
+	}
+	let changed_doc_data = change.doc.data();
+	console.log({changed_doc_data});
+	console.log(change.type);
+	switch (change.type) {
+		case "added":
+		case "modified":
+			console.log("added/modified");
+			if (!changed_doc_data.twitch_id) {
+				// Must just add and save new data.
+				await createReward(changed_doc_data, current_id);
+			} else {
+				// check existing reward and see if we need to update it
+				let result;
 				try {
-					await twitch.deleteReward(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+					result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
 				} catch (e) {
 					if (e instanceof twitch.UnauthorizedError) {
 						try {
 							await refreshUser(campaign_data.ownerID);
 						} catch (e) {
 							if (e instanceof twitch.TwitchAPIError) {
-								console.error("Error trying to refresh User after invalid auth was present (during deletion of a deleted Reward):");
+								console.error("Error trying to refresh User after invalid authwas present (during Checking of existing Reward):");
 								console.error(e);
-								continue;
+								return;
 							}
 						}
-						await twitch.deleteReward(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+						result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
 					} else {
-						if (e.response) {
-							if (e.response.statusCode === 404) {
-								console.error("A reward that was deleted from firebase was not found on the Twitch API as it was trying to be deleted. This should be safe to ignore.");
-							} else {
-								console.error("Error deleting reward from Twitch API:");
-								console.error(e.response.body);
-							}
-						} else {
-							console.error("Unknown Error deleting reward from Twitch API:");
-							console.error(e);
-							throw e;
-						}
+						console.error("Unknown Error getting existing reward from Twitch API:");
+						console.error(e);
+						throw e;
 					}
 				}
-				console.log("removed from Twitch.");
-				break;
-			default:
-				console.log("UNKNOWN CHANGE TYPE");
-		}
+				if (result.length !== 1) {
+					await createReward(changed_doc_data, current_id);
+				} else {
+					let existing_reward = result[0];
+					// TODO: Compare reward data with local copy. Update if necessary.
+					console.log("Need to check if this stuff differs from local copy: " + JSON.stringify(existing_reward));
+				}
+			}
+			break;
+		case "removed":
+			if (!changed_doc_data.twitch_id) {
+				console.log("A non-twitch-synced reward was deleted. Ignoring, but this shouldn't really ever happen unless in an erroneus state.");
+				return;
+			}
+			try {
+				await twitch.deleteReward(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+			} catch (e) {
+				if (e instanceof twitch.UnauthorizedError) {
+					try {
+						await refreshUser(campaign_data.ownerID);
+					} catch (e) {
+						if (e instanceof twitch.TwitchAPIError) {
+							console.error("Error trying to refresh User after invalid auth was present (during deletion of a deleted Reward):");
+							console.error(e);
+							return;
+						}
+					}
+					await twitch.deleteReward(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+				} else {
+					if (e.response) {
+						if (e.response.statusCode === 404) {
+							console.error("A reward that was deleted from firebase was not found on the Twitch API as it was trying to be deleted. This should be safe to ignore.");
+						} else {
+							console.error("Error deleting reward from Twitch API:");
+							console.error(e.response.body);
+						}
+					} else {
+						console.error("Unknown Error deleting reward from Twitch API:");
+						console.error(e);
+						throw e;
+					}
+				}
+			}
+			console.log("removed from Twitch.");
+			break;
+		default:
+			console.log("UNKNOWN CHANGE TYPE");
 	}
+
 }
 
 async function createOrUpdateUserFromTokenDetailed(access_token, expires_in, scope, firebase_user_id, refresh_token = null, remove_refresh_token = false) {
