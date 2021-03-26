@@ -1,4 +1,9 @@
 import got, {HTTPError} from 'got';
+import WebSocket from 'ws';
+let pub_sub_channels_to_listen_to = [];
+
+let pubSub;
+let connecting = true;
 
 class InvalidAuthCodeError extends HTTPError {
 }
@@ -7,6 +12,138 @@ class TwitchAPIError extends HTTPError {
 }
 
 class UnauthorizedError extends TwitchAPIError {
+}
+
+async function pubSubPing() {
+	try {
+		pubSub.send(JSON.stringify({type: "PING"}));
+	} catch {}
+	setTimeout(pubSubPing, (260 + Math.floor((Math.random() * 40))) * 1000);
+}
+
+async function onPubSubConnect() {
+	connecting = false;
+	console.log("Connected to PubSub");
+	await pubSubPing();
+	for (const channel of pub_sub_channels_to_listen_to) {
+		listenTo(channel.id, channel.token);
+	}
+}
+
+async function onPubSubMessage(event) {
+	let data = JSON.parse(event.data);
+	switch (data.type) {
+		case "MESSAGE": {
+			let message = JSON.parse(data.data.message);
+			console.log("MESSAGE OF TOPIC " + data.data.topic + ": " + JSON.stringify(message));
+			if (!data.data.topic.startsWith("channel-points-channel")) {
+				console.log("Unknown Topic " + data.data.topic);
+				return;
+			}
+			if (message.type !== "reward-redeemed") {
+				console.log("Unknown type " + message.type);
+				return
+			}
+			let inner_data = message.data;
+			let redemption = inner_data.redemption;
+			let reward = redemption.reward;
+			let listener = pub_sub_channels_to_listen_to.find((element) => element.id === redemption.channel_id);
+			if (listener) {
+				for (const callback of listener.callbacks) {
+					await callback(inner_data);
+				}
+			}
+			break;
+		}
+		case "PONG": {
+			console.log("PUBSUB PONG");
+			break;
+		}
+		default: {
+			console.log("PUBSUB UNKNOWN MESSAGE EVENT " + data.type);
+			console.log(event.data);
+		}
+	}
+}
+
+async function connectToPubSub() {
+	if (pub_sub_channels_to_listen_to.length < 1) {
+		console.error("Don't have any channels to listen to, not connecting to pubsub.");
+		return;
+	}
+	if (connecting) {
+		console.log("already connecting, not connecting again...");
+	}
+	connecting = true;
+	if (pubSub) {
+		try {
+			pubSub.disconnect();
+		} catch {}
+	}
+	pubSub = new WebSocket('wss://pubsub-edge.twitch.tv');
+	pubSub.onopen = onPubSubConnect;
+	pubSub.onmessage = onPubSubMessage;
+}
+
+function listenTo(twitch_id, token) {
+	if (connecting) {
+		console.log("Still connecting, not adding listener on pubsub...");
+	}
+	pubSub.send(JSON.stringify({
+		type: "LISTEN",
+		data: {
+			topics: ["channel-points-channel-v1." + twitch_id],
+			auth_token: token
+		}
+	}));
+}
+
+function unlistenTo(twitch_id) {
+	if (connecting) {
+		console.log("Still connecting, not removing listener on pubsub...");
+	}
+	pubSub.send(JSON.stringify({
+		type: "UNLISTEN",
+		data: {
+			topics: ["channel-points-channel-v1." + twitch_id]
+		}
+	}));
+}
+
+async function addChannelToListenToForRewards(twitch_id, token, callback) {
+	let shouldConnect = pub_sub_channels_to_listen_to.length === 0;
+	const isListening = isListeningTo(twitch_id);
+	if (isListening) {
+		pub_sub_channels_to_listen_to.find(element => element.id === twitch_id).callbacks.push(callback);
+	} else {
+		pub_sub_channels_to_listen_to.push({id: twitch_id, token, callbacks: [callback]});
+	}
+	if (shouldConnect) {
+		await connectToPubSub();
+	} else if (!isListening) {
+		listenTo(twitch_id, token);
+	}
+}
+
+async function removeCallback(twitch_id, callback) {
+	const element = pub_sub_channels_to_listen_to.find(element => element.id === twitch_id);
+	if (element) {
+		let index = element.callbacks.indexOf(callback);
+		if (index > -1) {
+			element.callbacks.splice(index, 1);
+		}
+		if (element.callbacks.length === 0) {
+			unlistenTo(twitch_id);
+			index = pub_sub_channels_to_listen_to.indexOf(element);
+			if (index > -1) {
+				pub_sub_channels_to_listen_to.splice(index, 1);
+			}
+		}
+	}
+}
+
+function isListeningTo(twitch_id) {
+	return pub_sub_channels_to_listen_to.find(element => element.id === twitch_id);
 }
 
 async function exchangeCodeForToken(code) {
@@ -99,7 +236,7 @@ async function callHelixAPI(endpoint, token, method = "GET", params = {}, data =
 		}
 		console.log("Error calling Twitch API:");
 		console.log({response});
-		return response;
+		throw e;
 	}
 }
 
@@ -157,6 +294,9 @@ export {
 	getSingleRewardByIDAsArray,
 	createReward,
 	deleteReward,
+	connectToPubSub,
+	addChannelToListenToForRewards,
+	removeCallback,
 	InvalidAuthCodeError,
 	TwitchAPIError,
 	UnauthorizedError

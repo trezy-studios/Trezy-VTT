@@ -5,8 +5,10 @@ import {
 } from 'helpers/firebase';
 import * as twitch from 'helpers/twitch'
 import {UnauthorizedError} from 'helpers/twitch';
+import {HTTPError} from "got";
 
 let currentlyModifying = {};
+let listeningRewards = {};
 
 // Wrap it all in an `async` IIFE so we can simulate top-level `await`.
 (async () => {
@@ -140,7 +142,7 @@ async function handleRewardsChanges(change, campaign_data) {
 		throw new NoTwitchInforForRewardsError("Tried to process a rewards change without any Twitch Info available for the Owner of a campaign. Please make sure the Owner has valid twitch_info.")
 	}
 
-	async function createReward(changed_doc_data, firebase_id) {
+	async function createRewardOnTwitch(changed_doc_data, firebase_id) {
 		// reward didn't exist, re-create it and update the local ID!
 		let result = await twitch.createReward(twitch_info.id, twitch_info.access_token, {
 			title: changed_doc_data.title,
@@ -153,13 +155,14 @@ async function handleRewardsChanges(change, campaign_data) {
 			is_max_per_stream_enabled: Boolean(parseInt(changed_doc_data.maxRedemptions)) && (!changed_doc_data.isMaxRedemptionsPerUser),
 			is_max_per_user_per_stream_enabled: Boolean(parseInt(changed_doc_data.maxRedemptions)) && changed_doc_data.isMaxRedemptionsPerUser,
 			max_per_user_per_stream: parseInt(changed_doc_data.maxRedemptions) || 0,
-			max_per_stream: parseInt(changed_doc_data.maxRedemptions) || 0
+			max_per_stream: parseInt(changed_doc_data.maxRedemptions) || 0,
+			should_redemptions_skip_request_queue: true
 		});
-		console.log(JSON.stringify(result));
+		//console.log(JSON.stringify(result));
 		currentlyModifying[firebase_id] = true;
 		firestore.collection("rewards").doc(firebase_id).set({
 			twitch_id: result.data[0].id,
-			lastSynced: firebase.firestore.FieldValue.serverTimestamp()
+			lastSync: firebase.firestore.FieldValue.serverTimestamp()
 		}, {merge: true});
 	}
 
@@ -179,7 +182,7 @@ async function handleRewardsChanges(change, campaign_data) {
 			if (!changed_doc_data.twitch_id) {
 				// Must just add and save new data.
 				try {
-					await createReward(changed_doc_data, current_id);
+					await createRewardOnTwitch(changed_doc_data, current_id);
 				} catch (e) {
 					if (e instanceof twitch.UnauthorizedError) {
 						try {
@@ -194,7 +197,7 @@ async function handleRewardsChanges(change, campaign_data) {
 								throw e;
 							}
 						}
-						await createReward(changed_doc_data, current_id);
+						await createRewardOnTwitch(changed_doc_data, current_id);
 					} else {
 						console.error("Unknown Error creating reward in Twitch API:");
 						console.error(e);
@@ -206,34 +209,65 @@ async function handleRewardsChanges(change, campaign_data) {
 				// check existing reward and see if we need to update it
 				let result;
 				try {
-					result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
-				} catch (e) {
-					if (e instanceof twitch.UnauthorizedError) {
-						try {
-							await refreshUser(campaign_data.ownerID);
-							twitch_info = (await profile.data()).twitch_info;
-						} catch (e) {
-							if (e instanceof twitch.TwitchAPIError) {
-								console.error("Error trying to refresh User after invalid authwas present (during Checking of existing Reward):");
-								console.error(e);
-								return;
-							}
-						}
+					try {
 						result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+					} catch (e) {
+						if (e instanceof twitch.UnauthorizedError) {
+							try {
+								await refreshUser(campaign_data.ownerID);
+								twitch_info = (await profile.data()).twitch_info;
+							} catch (e) {
+								if (e instanceof twitch.TwitchAPIError) {
+									console.error("Error trying to refresh User after invalid auth was present (during Checking of existing Reward):");
+									console.error(e);
+								}
+								throw e;
+							}
+							result = await twitch.getSingleRewardByIDAsArray(twitch_info.id, changed_doc_data.twitch_id, twitch_info.access_token);
+						} else {
+							throw e;
+						}
+					}
+				} catch (e) {
+					if (e instanceof HTTPError) {
+						if (e.response.statusCode === 404) {
+							result = []; // Reward didn't exist in API. Handled below.
+						} else {
+							console.error("Unknown Error getting existing reward from Twitch API:");
+							console.error(e);
+						}
 					} else {
 						console.error("Unknown Error getting existing reward from Twitch API:");
 						console.error(e);
-						throw e;
 					}
 				}
-				if (result.length !== 1) {
 
-					await createReward(changed_doc_data, current_id);
+				if (result.length !== 1) {
+					console.log("There was no reward on Twitch for a local Reward that had a Twitch ID. Assuming it got deleted from Twitch, recreating...");
+					await createRewardOnTwitch(changed_doc_data, current_id);
 				} else {
 					let existing_reward = result[0];
 					// TODO: Compare reward data with local copy. Update if necessary.
 					console.log("Need to check if this stuff differs from local copy: " + JSON.stringify(existing_reward));
 				}
+			}
+			async function addCallbackToTwitch() {
+				let callback = async (data) => {
+					let current_firebase_reward = await (await firestore.collection("rewards").doc(current_id).get()).data();
+					if (current_firebase_reward.twitch_id === data.redemption.reward.id) {
+						console.log("TRIGGER EVENTS FOR " + current_id + " NOW!");
+						firestore.collection("redemptions").add({rewardID: current_id, twitchData: data});
+					}
+				}
+				await twitch.addChannelToListenToForRewards(twitch_info.id, twitch_info.access_token, callback);
+				listeningRewards[current_id] = callback;
+			}
+
+			if (!(current_id in listeningRewards)) {
+				await addCallbackToTwitch();
+			} else {
+				await twitch.removeCallback(twitch_info.id, listeningRewards[current_id]);
+				await addCallbackToTwitch();
 			}
 			break;
 		case "removed":
@@ -271,6 +305,7 @@ async function handleRewardsChanges(change, campaign_data) {
 					}
 				}
 			}
+			await twitch.removeCallback(twitch_info.id, listeningRewards[current_id]);
 			console.log("removed from Twitch.");
 			break;
 		default:
@@ -324,6 +359,8 @@ async function refreshUser(firebase_user_id) {
 	let response = await twitch.exchangeRefreshTokenForToken(twitch_info.refresh_token);
 	return createOrUpdateUserFromTokenDetailed(response.access_token, response.expires_in, response.scope, firebase_user_id);
 }
+
+twitch.connectToPubSub().then();
 
 export {
 	createOrUpdateUserFromAuthCode,

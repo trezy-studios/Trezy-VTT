@@ -5,7 +5,8 @@
   },
   "dependencies": {
     "firebase-admin": "^9.5.0",
-    "got": "^11.8.2"
+    "got": "^11.8.2",
+    "ws": "^7.4.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.0",
