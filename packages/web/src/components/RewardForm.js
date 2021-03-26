@@ -61,7 +61,6 @@ function RewardForm(props) {
 				cost: 100,
 				isMaxRedemptionsPerUser: false,
 				maxRedemptions: 0,
-				optionzorz: '',
 				title: '',
 			}}
 			onSubmit={handleSubmit}>
@@ -79,18 +78,24 @@ function RewardForm(props) {
 				id="cost"
 				label="Cost">
 				<FieldControl
+					alignment="right"
 					id="cost"
 					isRequired
 					min={1}
 					type="number" />
+
+				<p class="control">
+					<span class="button is-static">
+						bits
+					</span>
+				</p>
 			</Field>
 
 			<Field
-				helperText="Maximum number of times this reward can be redeemed per stream"
+				helperText="How many times can this reward can be redeemed per stream?"
 				id="maxRedemptions"
-				label="Max Redemptions Per Stream">
+				label="Max Redemptions">
 				<FieldControl
-					className="is-expanded"
 					id="maxRedemptions"
 					min={0}
 					type="number" />
@@ -105,13 +110,19 @@ function RewardForm(props) {
 			</Field>
 
 			<Field
-				helperText="Cooldown timer in seconds"
+				helperText="How much time must pass before this reward can be redeemed again?"
 				id="cooldown"
 				label="Cooldown">
 				<FieldControl
 					id="cooldown"
 					min={1}
 					type="number" />
+
+				<p class="control">
+					<span class="button is-static">
+						seconds
+					</span>
+				</p>
 			</Field>
 
 			<Field

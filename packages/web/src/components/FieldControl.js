@@ -21,14 +21,13 @@ import { useForm } from 'components/Form'
 
 function FieldControl(props) {
 	const {
+		alignment,
 		autocomplete,
 		className,
 		iconLeft,
 		id,
-		isCentered,
 		isDisabled,
 		isRequired,
-		options,
 		maxLength,
 		minLength,
 		shouldDebounceBy,
@@ -83,42 +82,10 @@ function FieldControl(props) {
 		validate(value, props)
 	}, [
 		id,
+		props,
 		type,
 		updateValue,
 		validate,
-	])
-
-	const mapOption = useCallback(([optionValue, details]) => {
-		const {
-			component,
-			label: optionLabel,
-		} = details
-
-		const optionID = `${id}::${optionValue}`
-
-		return (
-			<li
-				className={classnames('radio-option', className)}
-				key={optionID}>
-				<input
-					checked={optionValue === values[id]}
-					disabled={isDisabled}
-					id={optionID}
-					name={id}
-					onChange={handleChange}
-					required={isRequired}
-					type="radio"
-					value={optionValue} />
-
-				<label htmlFor={optionID}>
-					{component || optionLabel}
-				</label>
-			</li>
-		)
-	}, [
-		handleChange,
-		id,
-		isDisabled,
 	])
 
 	useEffect(() => {
@@ -139,29 +106,22 @@ function FieldControl(props) {
 				'has-icons-left': iconLeft,
 				'has-icons-right': formErrors[id].length,
 			})}>
-			{(type === 'radio') && (
-				<ol className="radio-options">
-					{Object.entries(options).map(mapOption)}
-				</ol>
-			)}
-
-			{(type !== 'radio') && (
-				<input
-					autoComplete={autocomplete}
-					className={classnames({
-						'has-text-centered': isCentered,
-						input: true,
-						'is-danger': formErrors[id].length,
-					})}
-					disabled={isDisabled}
-					id={id}
-					maxLength={maxLength}
-					minLength={minLength}
-					onChange={handleChange}
-					required={isRequired}
-					type={type}
-					value={values[id]} />
-			)}
+			<input
+				autoComplete={autocomplete}
+				className={classnames({
+					'has-text-centered': alignment === 'center',
+					'has-text-right': alignment === 'right',
+					input: true,
+					'is-danger': formErrors[id].length,
+				})}
+				disabled={isDisabled}
+				id={id}
+				maxLength={maxLength}
+				minLength={minLength}
+				onChange={handleChange}
+				required={isRequired}
+				type={type}
+				value={values[id]} />
 
 			{Boolean(iconLeft) && (
 				<span className="icon is-small is-left">
@@ -183,21 +143,21 @@ function FieldControl(props) {
 }
 
 FieldControl.defaultProps = {
+	alignment: 'left',
 	autocomplete: null,
 	className: null,
 	iconLeft: null,
-	isCentered: false,
 	isDisabled: false,
 	isRequired: false,
 	maxLength: null,
 	minLength: null,
-	options: {},
 	shouldDebounceBy: 0,
 	type: 'text',
 	validate: () => {},
 }
 
 FieldControl.propTypes = {
+	alignment: PropTypes.oneOf(['center', 'left', 'right']),
 	autocomplete: PropTypes.string,
 	className: PropTypes.string,
 	iconLeft: PropTypes.oneOfType([
@@ -205,12 +165,10 @@ FieldControl.propTypes = {
 		PropTypes.string,
 	]),
 	id: PropTypes.string.isRequired,
-	isCentered: PropTypes.bool,
 	isDisabled: PropTypes.bool,
 	isRequired: PropTypes.bool,
 	maxLength: PropTypes.number,
 	minLength: PropTypes.number,
-	options: PropTypes.object,
 	shouldDebounceBy: PropTypes.number,
 	type: PropTypes.string,
 	validate: PropTypes.func,
