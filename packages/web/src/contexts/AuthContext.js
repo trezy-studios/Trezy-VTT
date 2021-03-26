@@ -181,7 +181,7 @@ const AuthContextProvider = props => {
 				path: '/',
 			})
 		} else {
-			destroyCookie(null, 'firebaseAuthToken')
+			Cookies.remove('firebaseAuthToken')
 		}
 	}, [])
 

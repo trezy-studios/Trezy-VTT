@@ -65,7 +65,11 @@ function updateCachedCookie() {
 	const cookies = [...document.cookie.matchAll(new RegExp(REGEX_STRING, 'g'))]
 
 	cookieJar = cookies.reduce((accumulator, cookieArray) => {
-		const [, name, value, optionsString] = cookieArray
+		const [,
+			name,
+			value,
+			optionsString = '',
+		] = cookieArray
 
 		const options = optionsString
 			.replace(/;$/, '')
