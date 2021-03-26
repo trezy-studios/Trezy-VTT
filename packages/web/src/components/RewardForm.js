@@ -57,15 +57,16 @@ function RewardForm(props) {
 		<Form
 			initialValues={{
 				color: generateRandomHexColor(),
-				cooldown: 0,
+				cooldown: '',
 				cost: 100,
 				isMaxRedemptionsPerUser: false,
-				maxRedemptions: 0,
+				maxRedemptions: '',
 				title: '',
 			}}
 			onSubmit={handleSubmit}>
 			<Field
 				id="title"
+				isRequired
 				label="Name">
 				<FieldControl
 					id="title"
@@ -76,6 +77,7 @@ function RewardForm(props) {
 			<Field
 				helperText="How many channel points does it cost to redeem this reward?"
 				id="cost"
+				isRequired
 				label="Cost">
 				<FieldControl
 					alignment="right"
@@ -96,6 +98,7 @@ function RewardForm(props) {
 				id="maxRedemptions"
 				label="Max Redemptions">
 				<FieldControl
+					alignment="right"
 					id="maxRedemptions"
 					min={0}
 					type="number" />
@@ -114,8 +117,9 @@ function RewardForm(props) {
 				id="cooldown"
 				label="Cooldown">
 				<FieldControl
+					alignment="right"
 					id="cooldown"
-					min={1}
+					min={0}
 					type="number" />
 
 				<p class="control">
@@ -128,6 +132,7 @@ function RewardForm(props) {
 			<Field
 				helperText="This is the color that will be used on Twitch"
 				id="color"
+				isRequired
 				label="Color">
 				<FieldColor id="color" />
 			</Field>

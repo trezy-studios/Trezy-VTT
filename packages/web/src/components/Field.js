@@ -67,6 +67,13 @@ function Field(props) {
 				errors.push('Too short')
 			}
 
+			if (
+				['number'].includes(typeof initialProps.minNumber) &&
+				(Number(state) < initialProps.minNumber)
+			){
+				errors.push('Too low')
+			}
+
 			if (initialProps.isRequired && !state) {
 				errors.push('Field is required')
 			}
@@ -246,6 +253,9 @@ function Field(props) {
 				})}
 				htmlFor={id}>
 				{label}
+				{isRequired && (
+					<span className="has-text-danger">{'*'}</span>
+				)}
 			</label>
 		)
 	}
