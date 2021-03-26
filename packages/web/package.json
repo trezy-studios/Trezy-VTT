@@ -20,8 +20,10 @@
     "next": "^10.0.7",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
+    "react-color": "^2.19.3",
     "react-dom": "^17.0.1",
     "react-markdown": "^5.0.3",
+    "tinycolor2": "^1.4.2",
     "vtt": "workspace:*"
   },
   "devDependencies": {

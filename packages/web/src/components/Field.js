@@ -1,5 +1,6 @@
 // Module imports
 import {
+	Children,
 	useCallback,
 	useEffect,
 	useState,
@@ -7,6 +8,7 @@ import {
 import debounce from 'lodash/debounce'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
+import { ChromePicker } from 'react-color'
 
 
 
@@ -23,19 +25,22 @@ import { useForm } from 'components/Form'
 function Field(props) {
 	const {
 		autocomplete,
+		children,
+		className,
+		helperText,
 		iconLeft,
 		id,
 		isDisabled,
 		isCentered,
 		isRequired,
-		onChange,
-		options,
 		label,
+		options,
 		maxLength,
 		minLength,
 		shouldDebounceBy,
 		showLabel,
 		type,
+		title,
 	} = props
 	const {
 		errors: formErrors,
@@ -60,6 +65,13 @@ function Field(props) {
 				(state.length < initialProps.minLength)
 			) {
 				errors.push('Too short')
+			}
+
+			if (
+				['number'].includes(typeof initialProps.minNumber) &&
+				(Number(state) < initialProps.minNumber)
+			){
+				errors.push('Too low')
 			}
 
 			if (initialProps.isRequired && !state) {
@@ -121,7 +133,8 @@ function Field(props) {
 					onChange={handleChange}
 					required={isRequired}
 					type="radio"
-					value={optionValue} />
+					value={optionValue}
+					title={title}/>
 
 				<label htmlFor={optionID}>
 					{component || optionLabel}
@@ -156,7 +169,26 @@ function Field(props) {
 		)
 	}
 
-	if (type === 'checkbox') {
+	if (type === 'chromepicker'){
+		const [color, setColor] = useState(values[id])
+		return (
+		<div className="field">
+			<label className="label">Color</label>
+
+			<div title={title}>
+				<ChromePicker
+					color={color}
+					onChange={color => {
+						setColor(color)
+						updateValue(id, color.hex)
+						validate(color.hex, props)
+					}}/>
+			</div>
+		</div>
+		)
+	}
+
+	if (type === "checkbox") {
 		if (showLabel) {
 			return (
 				<label className="checkbox">
@@ -171,117 +203,165 @@ function Field(props) {
 					{label}
 				</label>
 			)
-		}
 
+			return (
+				<div className="field">
+					<label className="checkbox">
+						<input
+							checked={values[id]}
+							className="checkbox"
+							disabled={isDisabled}
+							id={id}
+							onChange={handleChange}
+							required={isRequired}
+							title={title}
+							type={type} />
+						{label}
+					</label>
+				</div>
+			)
+		}
+	}
+
+	let renderedHelpers = null
+	let renderedLabel = null
+
+	if (!formErrors[id].length && helperText) {
+		renderedHelpers = (
+			<p className="help">{helperText}</p>
+		)
+	} else if (Boolean(formErrors[id].length)) {
+		renderedHelpers = (
+			<ul>
+				{formErrors[id].map(error => (
+					<li
+						className="help is-danger"
+						key={error}>
+						{error}
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	if (showLabel) {
+		renderedLabel = (
+			<label
+				className={classnames({
+					label: true,
+					'has-text-centered': isCentered,
+				})}
+				htmlFor={id}>
+				{label}
+				{isRequired && (
+					<span className="has-text-danger">{'*'}</span>
+				)}
+			</label>
+		)
+	}
+
+	if (Children.count(children) > 1) {
 		return (
-			<input
-				checked={values[id]}
-				className="checkbox"
-				disabled={isDisabled}
-				id={id}
-				onChange={handleChange}
-				required={isRequired}
-				type={type} />
+			<div className={classnames('field', className)}>
+				{renderedLabel}
+
+				<div className="field has-addons">
+					{children}
+				</div>
+
+				{renderedHelpers}
+			</div>
 		)
 	}
 
 	return (
 		<div
-			className={classnames({
+			className={classnames(className, {
 				field: true,
+				'has-addons': Children.count(children) > 1,
 				'radio-group': type === 'radio',
 			})}>
+			{renderedLabel}
 
-			{showLabel && (
-				<label
+			{children || (
+				<div
 					className={classnames({
-						label: true,
-						'has-text-centered': isCentered,
-					})}
-					htmlFor={id}>
-					{label}
-				</label>
+						control: true,
+						'has-icons-left': iconLeft,
+						'has-icons-right': formErrors[id].length,
+					})}>
+					{(type === 'radio') && (
+						<ol className="radio-options">
+							{Object.entries(options).map(mapOption)}
+						</ol>
+					)}
+
+					{(type !== 'radio') && (
+						<input
+							autoComplete={autocomplete}
+							className={classnames({
+								'has-text-centered': isCentered,
+								input: true,
+								'is-danger': formErrors[id].length,
+							})}
+							disabled={isDisabled}
+							id={id}
+							maxLength={maxLength}
+							minLength={minLength}
+							onChange={handleChange}
+							required={isRequired}
+							type={type}
+							value={values[id]}
+							title={title} />
+					)}
+
+					{Boolean(iconLeft) && (
+						<span className="icon is-small is-left">
+							<FontAwesomeIcon
+								fixedWidth
+								icon={iconLeft} />
+						</span>
+					)}
+
+					{Boolean(formErrors[id].length) && (
+						<span className="icon is-small is-right">
+							<FontAwesomeIcon
+								fixedWidth
+								icon="exclamation-triangle" />
+						</span>
+					)}
+				</div>
 			)}
 
-			<div
-				className={classnames({
-					control: true,
-					'has-icons-left': iconLeft,
-					'has-icons-right': formErrors[id].length,
-				})}>
-				{(type === 'radio') && (
-					<ol className="radio-options">
-						{Object.entries(options).map(mapOption)}
-					</ol>
-				)}
-
-				{(type !== 'radio') && (
-					<input
-						autoComplete={autocomplete}
-						className={classnames({
-							'has-text-centered': isCentered,
-							input: true,
-							'is-danger': formErrors[id].length,
-						})}
-						disabled={isDisabled}
-						id={id}
-						maxLength={maxLength}
-						minLength={minLength}
-						onChange={handleChange}
-						required={isRequired}
-						type={type}
-						value={values[id]} />
-				)}
-
-				{Boolean(iconLeft) && (
-					<span className="icon is-small is-left">
-						<FontAwesomeIcon
-							fixedWidth
-							icon={iconLeft} />
-					</span>
-				)}
-
-				{Boolean(formErrors[id].length) && (
-					<span className="icon is-small is-right">
-						<FontAwesomeIcon
-							fixedWidth
-							icon="exclamation-triangle" />
-					</span>
-				)}
-			</div>
-
-			{Boolean(formErrors[id].length) && (
-				<ul>
-					{formErrors[id].map(error => (
-						<li
-							className="help is-danger"
-							key={error}>
-							{error}
-						</li>
-					))}
-				</ul>
-			)}
+			{renderedHelpers}
 		</div>
 	)
 }
 
 Field.defaultProps = {
 	autocomplete: null,
+	children: null,
+	className: null,
+	helperText: null,
 	iconLeft: null,
 	isDisabled: false,
 	isRequired: false,
+	label: null,
 	maxLength: null,
 	minLength: null,
-	onChange: () => {},
 	options: {},
 	validate: () => {},
 	shouldDebounceBy: 0,
 	showLabel: true,
 	type: 'text',
+	title: null,
 }
 
 Field.propTypes = {
 	autocomplete: PropTypes.string,
+	children: PropTypes.node,
+	className: PropTypes.string,
+	helperText: PropTypes.string,
 	iconLeft: PropTypes.oneOfType([
 		PropTypes.array,
 		PropTypes.string,
@@ -289,13 +369,13 @@ Field.propTypes = {
 	id: PropTypes.string.isRequired,
 	isDisabled: PropTypes.bool,
 	isRequired: PropTypes.bool,
-	label: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	maxLength: PropTypes.number,
 	minLength: PropTypes.number,
-	onChange: PropTypes.func,
 	options: PropTypes.object,
 	shouldDebounceBy: PropTypes.number,
 	showLabel: PropTypes.bool,
+	title: PropTypes.string,
 	type: PropTypes.string,
 	validate: PropTypes.func,
 }

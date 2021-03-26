@@ -30,6 +30,7 @@ export const handler = async (request, response) => {
 			.get()
 
 		campaign.isActive = !activeCampaigns.docs.length
+		campaign.isSynced = true
 		campaign.ownerID = user.uid
 		campaign.playerIDs = []
 

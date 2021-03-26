@@ -38,7 +38,6 @@ export default function CampaignDashboardPage() {
 	useRedirectOnLoggedOut()
 
 	const campaign = campaigns?.[campaignID]
-
 	// TODO: These should be derived from a game object in our database, keyed off the `gameID` field on the campaign
 	const gameTitle = 'Dungeons & Dragons: Fifth Edition'
 	const gameURL = 'https://dnd.wizards.com'
@@ -135,7 +134,7 @@ export default function CampaignDashboardPage() {
 							)}
 
 							{(activeTab === 'rewards') && (
-								<CampaignRewards />
+								<CampaignRewards campaign={{id: campaignID, ownerID: campaign.ownerID}} />
 							)}
 						</div>
 					</div>
