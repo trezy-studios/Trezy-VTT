@@ -178,7 +178,30 @@ async function handleRewardsChanges(change, campaign_data) {
 			console.log("added/modified");
 			if (!changed_doc_data.twitch_id) {
 				// Must just add and save new data.
-				await createReward(changed_doc_data, current_id);
+				try {
+					await createReward(changed_doc_data, current_id);
+				} catch (e) {
+					if (e instanceof twitch.UnauthorizedError) {
+						try {
+							await refreshUser(campaign_data.ownerID);
+							twitch_info = (await profile.data()).twitch_info;
+						} catch (e) {
+							if (e instanceof twitch.TwitchAPIError) {
+								console.error("Error trying to refresh User after invalid authwas present (during Checking of existing Reward):");
+								console.error(e);
+								return;
+							} else {
+								throw e;
+							}
+						}
+						await createReward(changed_doc_data, current_id);
+					} else {
+						console.error("Unknown Error creating reward in Twitch API:");
+						console.error(e);
+						throw e;
+					}
+				}
+
 			} else {
 				// check existing reward and see if we need to update it
 				let result;
@@ -188,6 +211,7 @@ async function handleRewardsChanges(change, campaign_data) {
 					if (e instanceof twitch.UnauthorizedError) {
 						try {
 							await refreshUser(campaign_data.ownerID);
+							twitch_info = (await profile.data()).twitch_info;
 						} catch (e) {
 							if (e instanceof twitch.TwitchAPIError) {
 								console.error("Error trying to refresh User after invalid authwas present (during Checking of existing Reward):");
@@ -203,6 +227,7 @@ async function handleRewardsChanges(change, campaign_data) {
 					}
 				}
 				if (result.length !== 1) {
+
 					await createReward(changed_doc_data, current_id);
 				} else {
 					let existing_reward = result[0];
@@ -222,6 +247,7 @@ async function handleRewardsChanges(change, campaign_data) {
 				if (e instanceof twitch.UnauthorizedError) {
 					try {
 						await refreshUser(campaign_data.ownerID);
+						twitch_info = (await profile.data()).twitch_info;
 					} catch (e) {
 						if (e instanceof twitch.TwitchAPIError) {
 							console.error("Error trying to refresh User after invalid auth was present (during deletion of a deleted Reward):");
