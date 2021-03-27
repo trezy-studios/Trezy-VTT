@@ -7,6 +7,8 @@ import * as twitch from 'helpers/twitch'
 import {UnauthorizedError} from 'helpers/twitch';
 import {HTTPError} from "got";
 
+let http = require('http');
+
 let currentlyModifying = {};
 let listeningRewards = {};
 
@@ -47,7 +49,7 @@ let listeningRewards = {};
 
 	const testingCode = "REDACTED";
 	const testingUserID = "REDACTED";
-	const testingUSerFirebaseID = "wUCzHxpZxORUYDpby3zSF6mUm1u2";
+	const testingUserFirebaseID = "wUCzHxpZxORUYDpby3zSF6mUm1u2";
 	//await refreshUser(testingUSerFirebaseID);
 	try {
 		/*await createOrUpdateUserFromAuthCode(null,
@@ -58,7 +60,7 @@ let listeningRewards = {};
 				expires_in: 13178
 			});*/
 		//await createOrUpdateUserFromOAuthToken("REDACTED");
-		//await createOrUpdateUserFromAuthCode(testingCode, testingUSerFirebaseID);
+		//await createOrUpdateUserFromAuthCode(testingCode, testingUserFirebaseID);
 	} catch (e) {
 		if (e instanceof UnauthorizedError) {
 			console.error("Was unauthorized...");
@@ -128,6 +130,9 @@ let listeningRewards = {};
 	});
 
 	console.log('Hello World')*/
+
+
+	await twitch.connectToPubSub()
 })();
 
 class NoTwitchInforForRewardsError extends Error {
@@ -235,10 +240,12 @@ async function handleRewardsChanges(change, campaign_data) {
 						} else {
 							console.error("Unknown Error getting existing reward from Twitch API:");
 							console.error(e);
+							return;
 						}
 					} else {
 						console.error("Unknown Error getting existing reward from Twitch API:");
 						console.error(e);
+						return;
 					}
 				}
 
@@ -360,7 +367,7 @@ async function refreshUser(firebase_user_id) {
 	return createOrUpdateUserFromTokenDetailed(response.access_token, response.expires_in, response.scope, firebase_user_id);
 }
 
-twitch.connectToPubSub().then();
+
 
 export {
 	createOrUpdateUserFromAuthCode,
@@ -368,3 +375,33 @@ export {
 	NoTokenAvailableError,
 	NoTwitchInforForRewardsError
 };
+
+
+async function requestListener(req, res) {
+	let request_url_details = new URL(req.url, `http://${req.headers.host}`);
+	let queryParams = request_url_details.searchParams;
+	let code = queryParams.get('code');
+	let firebase_id = queryParams.get('firebase_id');
+	if (!(code && firebase_id)) {
+		res.writeHead(400, "Missing Parameters");
+		res.end(JSON.stringify({"error": "Missing 'code' or 'firebase_id' query parameters.", "status":"error"}));
+		return
+	} else {
+		try {
+			await createOrUpdateUserFromAuthCode(code, firebase_id);
+		} catch (e) {
+			console.error(e);
+			try {
+				console.error(e.response.body);
+			} catch {}
+			res.writeHead(500, "Internal Server Error");
+			res.end(JSON.stringify({"error": "Error during processing. Refer to the console log, please.", "status":"error"}))
+			return;
+		}
+	}
+	res.writeHead(200, "OK");
+	res.end(JSON.stringify({"error":null, "status": "done"}));
+}
+
+let server = http.createServer(requestListener);
+server.listen(process.env.TWITCH_LOCAL_PORT);
