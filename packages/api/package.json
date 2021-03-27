@@ -1,14 +1,21 @@
 {
   "name": "api",
   "scripts": {
-    "start": "nodemon --exec babel-node -r dotenv/config ./src/index.js"
+    "start": "nodemon --exec \"yarn workspace api babel-node\" -r dotenv/config ./src/index.js"
   },
   "dependencies": {
-    "firebase-admin": "^9.5.0"
+    "firebase-admin": "^9.5.0",
+    "got": "^11.8.2",
+    "ws": "^7.4.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.0",
     "@babel/core": "^7.13.1",
+    "@babel/node": "^7.13.0",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.13.8",
+    "@babel/preset-env": "^7.13.8",
+    "babel-plugin-module-resolver": "^4.1.0",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.7"
   }
