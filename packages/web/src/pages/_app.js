@@ -12,6 +12,8 @@ import { Banner } from 'components/Banner'
 import { CampaignsContextProvider } from 'contexts/CampaignsContext'
 import { CharactersContextProvider } from 'contexts/CharactersContext'
 import { ModalsContextProvider } from 'contexts/ModalsContext'
+import { NotificationsContextProvider } from 'contexts/NotificationsContext'
+import { Notifications } from 'components/Notifications'
 import { reportWebVitals } from 'helpers/reportWebVitals'
 import { useFontawesome } from 'hooks/useFontawesome'
 
@@ -30,22 +32,26 @@ export default function App(props) {
 	useFontawesome()
 
 	return (
-		<AuthContextProvider>
-			<CharactersContextProvider>
-				<CampaignsContextProvider>
-					<ModalsContextProvider>
-						<div
-							className="container"
-							id="application-wrapper">
-							<Banner />
-							<Component {...pageProps} />
-						</div>
+		<ModalsContextProvider>
+			<NotificationsContextProvider>
+				<AuthContextProvider>
+					<CharactersContextProvider>
+						<CampaignsContextProvider>
+							<div
+								className="container"
+								id="application-wrapper">
+								<Banner />
+								<Component {...pageProps} />
+							</div>
 
-						<div id="modal-container" />
-					</ModalsContextProvider>
-				</CampaignsContextProvider>
-			</CharactersContextProvider>
-		</AuthContextProvider>
+							<div id="modal-container" />
+
+							<Notifications />
+						</CampaignsContextProvider>
+					</CharactersContextProvider>
+				</AuthContextProvider>
+			</NotificationsContextProvider>
+		</ModalsContextProvider>
 	)
 }
 
