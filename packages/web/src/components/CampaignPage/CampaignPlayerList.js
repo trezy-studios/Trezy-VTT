@@ -8,6 +8,8 @@ import ReactMarkdown from 'react-markdown'
 // Module imports
 import { FontAwesomeIcon } from 'components/FontAwesomeIcon'
 import PropTypes from 'prop-types'
+import {useState} from 'react'
+import {InviteModal} from 'components/InviteModal'
 
 
 
@@ -23,6 +25,9 @@ function mapPlayer(item, index) {
 
 function CampaignPlayerList(props) {
 	const { players } = props
+
+	const [shouldShowInviteModal, setShouldShowInviteModal] = useState(false)
+	const handleCreateInviteClick = () => setShouldShowInviteModal(true)
 
 	return (
 		<details
@@ -55,8 +60,12 @@ function CampaignPlayerList(props) {
 			</div>
 
 			<footer className="card-footer">
-				<a href="#" className="card-footer-item">{'Invite Players'}</a>
+				<a href="#" className="card-footer-item" onClick={handleCreateInviteClick}>{'Invite Players'}</a>
 			</footer>
+			{shouldShowInviteModal && (
+				<InviteModal
+					showModal={setShouldShowInviteModal} />
+			)}
 		</details>
 	)
 }
