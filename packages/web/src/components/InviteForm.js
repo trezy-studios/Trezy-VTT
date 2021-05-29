@@ -12,6 +12,7 @@ import { FieldControl } from 'components/FieldControl'
 import { Form } from 'components/Form'
 import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
+import API from 'helpers/API'
 
 
 function InviteForm(props) {
@@ -30,6 +31,8 @@ function InviteForm(props) {
 		if (isValid) {
 			try {
 				console.log("to do: send invite to email");
+                values.campaignID = 'dummyID'
+                const newCampaignID = await createInvite({ ...values })
 				showModal(false)
 			} catch(error) {
 				alert(`Unexpected error saving reward: ` + error)
@@ -72,6 +75,24 @@ InviteForm.defaultProps = {
 
 InviteForm.propTypes = {
 	isModal: PropTypes.bool
+}
+
+
+/**
+ * Saves a new invite to the firestore invites collection
+ * @param {*} invite invite object that we expect to be populated
+ * with a name, game type, description, and owner ID
+ * @returns If successful, the ID of the new invite object
+ * Otherwise, null
+ */
+const createInvite = async invite => {
+    const response = await API.post({
+        body: invite,
+        route: '/invites/new',
+    })
+    const responseJSON = await response.json()
+
+    return responseJSON.id
 }
 
 export { InviteForm }

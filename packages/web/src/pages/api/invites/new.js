@@ -44,9 +44,6 @@ export const handler = async (request, response) => {
 }
 
 
-
-
-
 export default createEndpoint({
 	allowedMethods: ['post'],
 	handler,
