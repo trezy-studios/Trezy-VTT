@@ -1,1 +1,1 @@
-export {} from '@fortawesome/free-brands-svg-icons'
+export { faTwitch } from '@fortawesome/free-brands-svg-icons'
