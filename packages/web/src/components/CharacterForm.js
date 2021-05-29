@@ -19,6 +19,7 @@ import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
 import { useCharacters } from 'contexts/CharactersContext'
 import { useModals } from 'contexts/ModalsContext'
+import { FieldHidden } from './FieldHidden'
 
 
 
@@ -65,10 +66,8 @@ function CharacterForm(props) {
 					maxLength={100} />
 			</Field>
 
-			<Field
+			<FieldHidden
 				id="gameID"
-				label="Game"
-				type="hidden"
 				value="dnd5e" />
 
 			<menu type="toolbar">
