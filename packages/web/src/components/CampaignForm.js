@@ -19,6 +19,7 @@ import { FormButton } from 'components/FormButton'
 import { useAuth } from 'contexts/AuthContext'
 import { useCampaigns } from 'contexts/CampaignsContext'
 import { useModals } from 'contexts/ModalsContext'
+import { FieldHidden } from './FieldHidden'
 
 
 
@@ -75,10 +76,12 @@ function CampaignForm(props) {
 			</Field>
 
 			<Field
-				id="gameID"
-				label="Game"
-				type="hidden"
-				value="dnd5e" />
+				id="gameID">
+				<FieldHidden
+					id="gameID"
+					value="dnd5e" />
+			</Field>
+
 
 			<menu type="toolbar">
 				<div className="menu-right">
