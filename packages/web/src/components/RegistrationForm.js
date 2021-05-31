@@ -51,7 +51,7 @@ function RegistrationForm(props) {
 		}
 
 		return 'Email is already in use.'
-	})
+	}, [validateEmail])
 
 	const handleValidateUsername = useCallback(async value => {
 		const isValid = await validateUsername(value)
@@ -61,7 +61,7 @@ function RegistrationForm(props) {
 		}
 
 		return 'Username is already taken.'
-	})
+	}, [validateUsername])
 
 	useEffect(() => {
 		if (isModal && isLoggedIn) {
