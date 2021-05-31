@@ -32,11 +32,11 @@ export default function App(props) {
 	useFontawesome()
 
 	return (
-		<ModalsContextProvider>
+		<AuthContextProvider>
 			<NotificationsContextProvider>
-				<AuthContextProvider>
-					<CharactersContextProvider>
-						<CampaignsContextProvider>
+				<CharactersContextProvider>
+					<CampaignsContextProvider>
+						<ModalsContextProvider>
 							<div
 								className="container"
 								id="application-wrapper">
@@ -47,11 +47,11 @@ export default function App(props) {
 							<div id="modal-container" />
 
 							<Notifications />
-						</CampaignsContextProvider>
-					</CharactersContextProvider>
-				</AuthContextProvider>
+						</ModalsContextProvider>
+					</CampaignsContextProvider>
+				</CharactersContextProvider>
 			</NotificationsContextProvider>
-		</ModalsContextProvider>
+		</AuthContextProvider>
 	)
 }
 
