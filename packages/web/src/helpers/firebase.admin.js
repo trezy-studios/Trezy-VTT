@@ -5,7 +5,7 @@ import * as firebase from 'firebase-admin'
 
 
 
-// Local variables// Local variables
+// Local variables
 let app = null
 let auth = null
 let firestore = null

@@ -29,6 +29,7 @@ const firebaseConfig = {
 let auth = null
 let database = null
 let firestore = null
+let storage = null
 
 
 
@@ -50,6 +51,17 @@ if (!firestore) {
 	firestore = firebase.firestore()
 }
 
+if (!storage) {
+	storage = firebase.storage()
+}
+
+if (process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATORS) {
+	auth.useEmulator(process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST)
+	database.useEmulator(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST)
+	firestore.useEmulator(process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST)
+	storage.useEmulator(process.env.NEXT_PUBLIC_FIRESTORE_STORAGE_EMULATOR_HOST)
+}
+
 
 
 
@@ -60,4 +72,5 @@ export {
 	database,
 	firebase,
 	firestore,
+	storage,
 }
