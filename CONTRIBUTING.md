@@ -2,11 +2,12 @@
 
 ## Setting up your environment
 
-1. First, make sure you have the prerequisites installed:
+1. **First, make sure you have the prerequisites installed:**
     * Node@>=14
-    * Yarn@latest
+    * Yarn@>=2
+    * Java@>=8 ([wut](#why-java))
 
-1. Install dependencies for all packages:
+1. **Install dependencies for all packages:**
     ```bash
     yarn install
     ```
@@ -21,13 +22,16 @@ yarn vercel:link # trezy-vtt
 yarn vercel:env:pull
 ```
 
-You'll also need to set your dev ENV variable so that Firebase will isolate your changes. To do this, just set `NEXT_PUBLIC_CURRENT_DEV=your name` in your `.env` file.
-
 ### API ENV Variables
 
 If you need the ENV variables for the API, just poke Trezy.
 
 ## Running the packages
+
+The first thing you'll want to do to run any of the apps locally is start up the Firebase emulators:
+```bash
+yarn start:emulators
+```
 
 To run the API:
 ```bash
@@ -48,3 +52,9 @@ To build the VTT when changes occur:
 ```bash
 yarn start:vtt
 ```
+
+## FAQ
+
+### Why Java?
+
+I know, why in the butts would we need JAVA of all things to work on this Node/Next app? Well, Java is required for the Firebase emulators, which run locally. It's a pain, I know, but it means that we can work entirely offline. There's no more remote Firebase dependency for local development! 🥳
