@@ -21,5 +21,8 @@
 		"vercel:login": "yarn workspace web vercel login",
 		"vercel:link": "yarn workspace web vercel link",
 		"vercel:env:pull": "yarn workspace web vercel env pull"
+	},
+	"devDependencies": {
+		"firebase-tools": "^9.12.1"
 	}
 }
