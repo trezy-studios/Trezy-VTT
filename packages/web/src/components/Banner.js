@@ -130,6 +130,38 @@ export function Banner() {
 				</div>
 
 				<div className="navbar-end">
+					{isLoggedIn && (
+						<div className="navbar-item has-dropdown is-hoverable">
+							<Link href="/dashboard">
+								<a className="navbar-link">
+									{'My Account'}
+								</a>
+							</Link>
+
+							<div className="navbar-dropdown is-right">
+								<Link href="/dashboard">
+									<a className="navbar-item">
+										{'Profile'}
+									</a>
+								</Link>
+
+								<Link href="/settings/general">
+									<a className="navbar-item">
+										{'Settings'}
+									</a>
+								</Link>
+
+								<hr className="navbar-divider" />
+
+								<Link href="/version">
+									<a className="navbar-item">
+										{'Version 0.0.0'}
+									</a>
+								</Link>
+							</div>
+						</div>
+					)}
+
 					<div className="navbar-item">
 						<div className="buttons">
 							{isLoggedIn && (
