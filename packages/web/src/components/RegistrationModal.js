@@ -1,17 +1,37 @@
+// Module imports
+import { PropTypes } from 'prop-types'
+
+
+
+
+
 // Local imports
-import { Modal } from 'components/Modal'
+import { FormModal } from 'components/FormModal'
 import { RegistrationForm } from 'components/RegistrationForm'
 
 
 
 
 
-export function RegistrationModal() {
+function RegistrationModal(props) {
+	const { onClose } = props
+
 	return (
-		<Modal
+		<FormModal
 			name="registration"
+			onClose={onClose}
 			title="Sign up">
-			<RegistrationForm isModal />
-		</Modal>
+			<RegistrationForm />
+		</FormModal>
 	)
 }
+
+RegistrationModal.defaultProps = {
+	onClose: () => {},
+}
+
+RegistrationModal.propTypes = {
+	onClose: PropTypes.func,
+}
+
+export { RegistrationModal }

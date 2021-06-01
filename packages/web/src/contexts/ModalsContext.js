@@ -77,7 +77,6 @@ const ModalsContextProvider = props => {
 	const [state, dispatch] = useReducer(reducer, { ...INITIAL_STATE })
 
 	const closeModal = useCallback(modalName => {
-		console.log(modalName)
 		dispatch({
 			payload: modalName,
 			type: 'close modal',

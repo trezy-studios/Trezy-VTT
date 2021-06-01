@@ -22,13 +22,16 @@ import { useModals } from 'contexts/ModalsContext'
 
 
 function LoginForm(props) {
-	const { isModal } = props
-	const { closeModal } = useModals()
+	const {
+		isModal,
+		onSuccess,
+	} = props
 	const {
 		isLoggedIn,
 		isLoggingIn,
 		login,
 	} = useAuth()
+	const { closeModal } = useModals()
 
 	const handleSubmit = useCallback(formState => {
 		const {
@@ -44,11 +47,13 @@ function LoginForm(props) {
 	useEffect(() => {
 		if (isModal && isLoggedIn) {
 			closeModal('login')
+			onSuccess()
 		}
 	}, [
 		closeModal,
 		isLoggedIn,
 		isModal,
+		onSuccess,
 	])
 
 	return (
@@ -65,6 +70,7 @@ function LoginForm(props) {
 					autocomplete="email"
 					iconLeft="envelope"
 					id="email"
+					isDisabled={isLoggingIn}
 					isRequired
 					type="email" />
 			</Field>
@@ -76,6 +82,7 @@ function LoginForm(props) {
 					autocomplete="current-password"
 					iconLeft="lock"
 					id="password"
+					isDisabled={isLoggingIn}
 					isRequired
 					type="password" />
 			</Field>
@@ -95,11 +102,11 @@ function LoginForm(props) {
 }
 
 LoginForm.defaultProps = {
-	isModal: false,
+	onSuccess: () => {},
 }
 
 LoginForm.propTypes = {
-	isModal: PropTypes.bool,
+	onSuccess: PropTypes.func,
 }
 
 export { LoginForm }

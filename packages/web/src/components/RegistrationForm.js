@@ -22,7 +22,10 @@ import { useModals } from 'contexts/ModalsContext'
 
 
 function RegistrationForm(props) {
-	const { isModal } = props
+	const {
+		isModal,
+		onSuccess,
+	} = props
 	const { closeModal } = useModals()
 	const {
 		isLoggedIn,
@@ -66,11 +69,13 @@ function RegistrationForm(props) {
 	useEffect(() => {
 		if (isModal && isLoggedIn) {
 			closeModal('registration')
+			onSuccess()
 		}
 	}, [
 		closeModal,
 		isLoggedIn,
 		isModal,
+		onSuccess,
 	])
 
 	return (
