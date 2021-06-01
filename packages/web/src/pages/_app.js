@@ -24,9 +24,7 @@ import { useFontawesome } from 'hooks/useFontawesome'
 export default function App(props) {
 	const {
 		Component,
-		isServer,
 		pageProps,
-		store,
 	} = props
 
 	useFontawesome()
