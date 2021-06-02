@@ -86,8 +86,8 @@ function RewardForm(props) {
 					min={1}
 					type="number" />
 
-				<p class="control">
-					<span class="button is-static">
+				<p className="control">
+					<span className="button is-static">
 						bits
 					</span>
 				</p>
@@ -122,8 +122,8 @@ function RewardForm(props) {
 					min={0}
 					type="number" />
 
-				<p class="control">
-					<span class="button is-static">
+				<p className="control">
+					<span className="button is-static">
 						seconds
 					</span>
 				</p>

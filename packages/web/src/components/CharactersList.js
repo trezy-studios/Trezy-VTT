@@ -34,7 +34,7 @@ export function CharactersList() {
 	if (!isCharactersLoaded) {
 		return (
 			<div className="box has-text-centered has-text-grey">
-				<progress class="progress is-small is-primary" />
+				<progress className="progress is-small is-primary" />
 				{'Loading...'}
 			</div>
 		)
