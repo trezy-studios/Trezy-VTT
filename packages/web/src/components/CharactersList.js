@@ -33,7 +33,18 @@ export function CharactersList() {
 
 	if (!isCharactersLoaded) {
 		return (
-			<div>Loading...</div>
+			<div className="box has-text-centered has-text-grey">
+				<progress class="progress is-small is-primary" />
+				{'Loading...'}
+			</div>
+		)
+	}
+
+	if (isCharactersLoaded && !characters) {
+		return (
+			<div className="box has-text-centered has-text-grey">
+				{'You haven\'t created any characters... yet.'}
+			</div>
 		)
 	}
 

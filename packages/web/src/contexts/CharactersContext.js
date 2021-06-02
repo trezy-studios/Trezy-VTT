@@ -62,6 +62,10 @@ function reducer(state, action) {
 			}
 			break
 
+		case 'loaded characters':
+			newState.isLoaded = true
+			break
+
 		case 'update characters':
 			newState.isLoaded = true
 			newState.characters = generateStateFromSnapshotPatch(newState.characters, payload.patch)
@@ -140,6 +144,7 @@ const CharactersContextProvider = props => {
 	}, [dispatch])
 
 	const handleCharacterSnapshot = useCallback(async snapshot => {
+		if (snapshot.size) {
 		const patch = generatePatchFromSnapshot(snapshot)
 
 		// Retrieve CharacterSheets for any games that we haven't loaded yet
@@ -168,7 +173,6 @@ const CharactersContextProvider = props => {
 			characterSheets.current[key] = characterSheetResults[index]
 		})
 
-		if (patch.length) {
 			dispatch({
 				payload: {
 					characterSheets: characterSheets.current,
@@ -176,6 +180,8 @@ const CharactersContextProvider = props => {
 				},
 				type: 'update characters',
 			})
+		} else {
+			dispatch({ type: 'loaded characters' })
 		}
 	}, [dispatch])
 
