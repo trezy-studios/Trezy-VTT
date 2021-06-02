@@ -6,3 +6,8 @@ body, html {
 	min-height: 100vh;
 	min-width: 100vw;
 }
+
+// Hides the warning that's injected when using Firebase emulators
+.firebase-emulator-warning {
+	display: none;
+}

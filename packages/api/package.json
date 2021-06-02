@@ -4,7 +4,7 @@
     "start": "nodemon --exec \"yarn workspace api babel-node\" -r dotenv/config ./src/index.js"
   },
   "dependencies": {
-    "firebase-admin": "^9.5.0",
+    "firebase-admin": "^9.9.0",
     "got": "^11.8.2",
     "ws": "^7.4.4"
   },

@@ -4,6 +4,7 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
 import 'firebase/firestore'
+import 'firebase/storage'
 /* eslint-enable import/no-unassigned-import */
 
 
