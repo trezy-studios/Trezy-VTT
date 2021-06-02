@@ -48,6 +48,10 @@ function reducer(state, action) {
 	}
 
 	switch (type) {
+		case 'loaded campaigns':
+			newState.isLoaded = true
+			break
+
 		case 'unwatch campaign':
 			newState.currentCampaignID = null
 			break
@@ -120,7 +124,7 @@ const CampaignsContextProvider = props => {
 	}, [])
 
 	const createReward = useCallback(async (reward, campaignID) => {
-		const response = await API.post({
+		await API.post({
 			body: {
 				...reward,
 				campaignID,
@@ -130,13 +134,15 @@ const CampaignsContextProvider = props => {
 	}, [])
 
 	const handleCampaignSnapshot = useCallback(snapshot => {
-		const patch = generatePatchFromSnapshot(snapshot)
+		if (snapshot.size) {
+			const patch = generatePatchFromSnapshot(snapshot)
 
-		if (patch.length) {
 			dispatch({
 				payload: patch,
 				type: 'update campaigns',
 			})
+		} else {
+			dispatch({ type: 'loaded campaigns' })
 		}
 	}, [dispatch])
 

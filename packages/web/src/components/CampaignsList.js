@@ -26,7 +26,18 @@ export function CampaignsList() {
 
 	if (!isCampaignsLoaded) {
 		return (
-			<div>Loading...</div>
+			<div className="box has-text-centered has-text-grey">
+				<progress class="progress is-small is-primary" />
+				{'Loading...'}
+			</div>
+		)
+	}
+
+	if (isCampaignsLoaded && !campaigns) {
+		return (
+			<div className="box has-text-centered has-text-grey">
+				{'You haven\'t created or joined any campaigns... yet.'}
+			</div>
 		)
 	}
 

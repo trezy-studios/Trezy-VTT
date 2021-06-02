@@ -15,7 +15,7 @@ export function CampaignSummary(props) {
 	return (
 		<div className="card">
 			<div className="card-image">
-				<figure className="image is-3by4">
+				<figure className="image">
 					<img src="/images/games/dnd5e/Illo2.jpg" alt="Blep" />
 				</figure>
 			</div>
