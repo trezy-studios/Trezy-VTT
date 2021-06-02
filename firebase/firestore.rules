@@ -1,41 +1,41 @@
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {    
-    function isCurrentOwner () {
-      return request.auth.uid == resource.data.ownerID;
-    }
-    
-    match /{document=**} {
-      allow create, read, update, delete: if false;
-    }
-    
-    match /campaigns/{campaignID} {
-    	allow read;
-    	allow update: if isCurrentOwner();
-      
+	match /databases/{database}/documents {
+		function isCurrentOwner () {
+			return request.auth.uid == resource.data.ownerID;
+		}
+
+		match /{document=**} {
+			allow read, write: if false;
+		}
+
+		match /campaigns/{campaignID} {
+			allow read;
+			allow update: if isCurrentOwner();
+
 			// Campaigns should only be created by the API via the Admin SDK, which ignores security rules
-    	allow create: if false;
-      
-      match /rewards/{rewardID} {
-    		allow read;
-      }
-    }
-    
-    match /characters/{characterID} {
-    	allow read;
-    	allow update: if isCurrentOwner();
-      
+			allow create: if false;
+		}
+
+		match /characters/{characterID} {
+			allow read;
+			allow update: if isCurrentOwner();
+
 			// Campaigns should only be created by the API via the Admin SDK, which ignores security rules
-    	allow create: if false;
-    }
-    
-    match /profiles/{userID} {
-    	allow read;
-    	allow update: if request.auth.uid == userID;
-    }
-    
-    match /settings/{userID} {
-    	allow read, update: if request.auth.uid == userID;
-    }
-  }
+			allow create: if false;
+		}
+
+		match /profiles/{userID} {
+			allow read;
+			allow update: if request.auth.uid == userID;
+		}
+
+		match /rewards/{rewardID} {
+			allow read;
+		}
+
+		match /settings/{userID} {
+			allow read, update: if request.auth.uid == userID;
+		}
+	}
 }

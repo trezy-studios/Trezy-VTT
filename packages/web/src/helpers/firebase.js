@@ -57,10 +57,10 @@ if (!storage) {
 }
 
 if (process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATORS) {
-	auth.useEmulator(process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST)
-	database.useEmulator(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST)
-	firestore.useEmulator(process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST)
-	storage.useEmulator(process.env.NEXT_PUBLIC_FIRESTORE_STORAGE_EMULATOR_HOST)
+	auth.useEmulator(`http://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST}:${process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_PORT}`)
+	database.useEmulator(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST, process.env.NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_PORT)
+	firestore.useEmulator(process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST, process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_PORT)
+	storage.useEmulator(process.env.NEXT_PUBLIC_FIRESTORE_STORAGE_EMULATOR_HOST, process.env.NEXT_PUBLIC_FIRESTORE_STORAGE_EMULATOR_PORT)
 }
 
 
