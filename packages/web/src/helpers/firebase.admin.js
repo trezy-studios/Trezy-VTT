@@ -29,7 +29,9 @@ if (!firebase.apps.length) {
 			token_uri: process.env.FIREBASE_TOKEN_URI,
 			type: process.env.FIREBASE_TYPE,
 		}),
-		databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+		databaseURL: process.env.NEXT_PUBLIC_FIREBASE_USE_EMULATORS ?
+			process.env.FIREBASE_DATABASE_EMULATOR_HOST :
+			process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
 	})
 }
 
