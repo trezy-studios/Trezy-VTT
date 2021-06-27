@@ -25,8 +25,7 @@ export const handler = async (request, response) => {
 			emailVerified: false,
 			password,
 		})
-
-		await Promise.all([
+		const [profile, settings] = await Promise.all([
 			firestore
 				.collection('profiles')
 				.doc(uid)
@@ -38,28 +37,39 @@ export const handler = async (request, response) => {
 				.set({ theme: 'system' }),
 		])
 
+		console.log({
+			uid,
+			profile,
+			settings,
+		})
 		response.status(httpStatus.CREATED).end()
 	} catch (error) {
-		console.log(error.errorInfo.code)
+		console.log(error)
 
-		switch (error.errorInfo.code) {
-			case 'auth/email-already-exists':
-				response.status(httpStatus.FORBIDDEN).json({
-					errors: [error.errorInfo.code]
-				})
-				break
+		if (error.errorInfo?.code) {
+			switch (error.errorInfo.code) {
+				case 'auth/email-already-exists':
+					return response.status(httpStatus.FORBIDDEN).json({
+						errors: [error.errorInfo.code]
+					})
+					break
 
-			case 'auth/invalid-password':
-				response.status(httpStatus.UNPROCESSABLE_ENTITY).json({
-					errors: [error.errorInfo.code]
-				})
-				break
+				case 'auth/invalid-password':
+					return response.status(httpStatus.UNPROCESSABLE_ENTITY).json({
+						errors: [error.errorInfo.code]
+					})
+					break
 
-			default:
-				response.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-					errors: [error.errorInfo.code],
-				})
+				default:
+					return response.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+						errors: [error.errorInfo.code],
+					})
+			}
 		}
+
+		return response.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+			errors: [error],
+		})
 	}
 }
 
