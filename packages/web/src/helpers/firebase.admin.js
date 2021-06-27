@@ -8,6 +8,7 @@ import * as firebase from 'firebase-admin'
 // Local variables
 let app = null
 let auth = null
+let database = null
 let firestore = null
 
 
@@ -40,6 +41,10 @@ if (!auth) {
 	auth = app?.auth()
 }
 
+if (!database) {
+	database = app?.database()
+}
+
 if (!firestore) {
 	firestore = app?.firestore()
 }
@@ -51,6 +56,7 @@ if (!firestore) {
 export {
 	app,
 	auth,
+	database,
 	firebase,
 	firestore,
 }
